@@ -546,3 +546,85 @@ header.tete{ display:none; }                 /* titre porté par l'accueil + l'o
   .modal-actions{justify-content:stretch}
   .modal-actions .btn{width:100%;text-align:center}
 }
+
+/* ===========================================================================
+   Bilan de fin de mandat : verdict, trajectoire des jauges, journal repliable,
+   bouton d'impression et feuille @media print.
+   =========================================================================== */
+.bilan-entete{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:14px}
+.bilan-niveau{font-size:11px;color:var(--encre-doux);border:1.4px solid var(--pierre-bord);border-radius:6px;padding:3px 9px}
+.bilan-grille{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:14px;align-items:start;margin-top:14px}
+.bilan-traj,.bilan-journal{background:var(--parchemin);border:2px solid var(--pierre-bord);border-radius:var(--rayon);padding:13px 15px}
+.bilan-sous-tete{font-family:var(--corps);font-weight:700;font-size:12px;letter-spacing:.03em;text-transform:uppercase;color:var(--bronze);margin-bottom:11px}
+
+.traj-ligne{margin-bottom:12px}
+.traj-ligne:last-of-type{margin-bottom:2px}
+.traj-haut{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.traj-nom{font-size:13px;font-weight:600;display:flex;align-items:center;min-width:0}
+.traj-ic{flex:none;display:inline-flex;margin-right:5px}
+.traj-ic svg{width:16px;height:16px;display:block}
+.traj-val{display:flex;align-items:center;gap:8px;white-space:nowrap}
+.traj-chiffres{font-size:12.5px;color:var(--encre-doux)}
+.chip-traj{display:inline-block;padding:2px 9px;border-radius:999px;font-size:11.5px;font-weight:700;background:#fff;border:1.5px solid currentColor}
+.chip-traj.plus{color:var(--olive)} .chip-traj.moins{color:var(--pompei)} .chip-traj.nul{color:var(--encre-doux)}
+.traj-rail{position:relative;height:9px;overflow:visible;margin-top:6px}
+.traj-depart{position:absolute;top:-3px;height:15px;width:2px;background:var(--encre);opacity:.55;border-radius:1px}
+.traj-legende{font-size:11px;color:var(--encre-doux);margin-top:11px;border-top:1px solid #ece2cd;padding-top:8px}
+
+.jacte{border:1.5px solid var(--pierre-bord);border-radius:6px;margin-bottom:8px;overflow:hidden;background:#fff}
+.jacte:last-child{margin-bottom:0}
+.jacte-tete{width:100%;display:flex;align-items:center;gap:8px;padding:9px 12px;background:var(--bronze-clair);
+  border:none;cursor:pointer;text-align:left;font-family:var(--display);font-size:12.5px;font-weight:600;color:var(--pourpre)}
+.jacte-tete:hover{background:#EADFC2}
+.jacte-tete:focus-visible{outline:3px solid var(--bronze);outline-offset:-3px}
+.jacte-chev{flex:none;display:inline-flex;transition:transform .2s}
+.jacte-chev svg{width:13px;height:13px;display:block}
+.jacte.ouvert .jacte-chev{transform:rotate(90deg)}
+.jacte-nom{flex:1;min-width:0}
+.jacte-compte{flex:none;font-family:var(--corps);font-weight:400;font-size:11px;color:var(--encre-doux)}
+.jacte-corps{display:none;padding:2px 12px 7px}
+.jacte.ouvert .jacte-corps{display:block}
+.jrow2{padding:8px 0;border-top:1px solid #ece2cd}
+.jacte-corps .jrow2:first-child{border-top:none}
+.jrow-titre{font-weight:600;font-size:12.5px;color:var(--encre)}
+.jrow-bas{margin-top:3px;display:flex;flex-wrap:wrap;gap:7px;align-items:baseline}
+.jrow-cons{font-size:11.5px;line-height:1.4;color:var(--encre-doux);flex:1;min-width:150px;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.jrow-chips{display:flex;gap:5px;flex-wrap:wrap}
+.mini-chip{font-size:10.5px;font-weight:700;padding:1px 7px;border-radius:999px;background:#fff;border:1.3px solid currentColor;white-space:nowrap}
+.mini-chip.plus{color:var(--olive)} .mini-chip.moins{color:var(--pompei)}
+.journal-vide{font-size:12.5px;color:var(--encre-doux)}
+
+.btn-second{background:transparent;color:var(--pourpre);border:2px solid var(--pierre-bord)}
+.btn-second:hover{border-color:var(--pourpre);background:var(--bronze-clair)}
+.btn-imprimer{display:inline-flex;align-items:center;gap:7px}
+.ic-print{width:16px;height:16px}
+
+.print-entete,.verdict-print{display:none}
+
+@media (max-width:760px){ .bilan-grille{grid-template-columns:1fr} }
+
+@media print{
+  header.tete,#son-toggle,#jauges,.scene-doc,.bilan-actions,.bilan-niveau,.traj-legende,.jacte-chev{display:none !important}
+  body{background:#fff !important;background-image:none !important;color:#000}
+  .wrap{max-width:none;padding:0}
+  .print-entete{display:block !important;margin:0 0 14px;border-bottom:2px solid #000;padding-bottom:8px}
+  .pe-haut{display:flex;justify-content:space-between;align-items:baseline;font-weight:700}
+  .pe-titre{font-family:var(--display);font-size:16px}
+  .pe-niveau{font-size:12px}
+  .pe-ligne{display:flex;justify-content:space-between;margin-top:7px;font-size:12.5px}
+  .verdict-print{display:block !important;font-size:12.5px;line-height:1.5;margin:0 0 14px;color:#000}
+  .bilan-entete,.titre-acte{margin-top:0}
+  .titre-acte{color:#000;font-size:18px}
+  .bilan-grille{display:block !important}
+  .bilan-traj,.bilan-journal{border:1px solid #888;background:#fff;page-break-inside:avoid;margin-bottom:12px;padding:10px 12px}
+  .bilan-sous-tete,.jrow-titre,.jrow-cons,.traj-chiffres,.jacte-compte{color:#000}
+  .jacte-corps{display:block !important}
+  .jacte{border:1px solid #aaa;page-break-inside:avoid}
+  .jacte-tete{background:#ececec !important;color:#000;cursor:default;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .traj-rail{height:8px;border:1px solid #000;border-radius:4px}
+  .fill{background:#777 !important;transition:none !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .traj-depart{background:#000 !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .chip-traj,.mini-chip{border-color:#000 !important;color:#000 !important;background:#fff !important}
+  *{box-shadow:none !important}
+}

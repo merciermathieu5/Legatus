@@ -17,6 +17,7 @@
 
   var etat, flags, persistants, idx, enRevolte, DIFF;
   var GEN_VERROU=0;   // jeton de génération : invalide un compte à rebours quand la scène change
+  var journal=[];     // journal du mandat : une entrée par décision (pour le bilan de fin)
 
   // pont vers la trame sonore (sans planter si l'audio est indisponible)
   function son(m,a,b){ try{ var A=window.AudioLegatus; if(A&&A[m]) A[m](a,b); }catch(e){} }
@@ -26,7 +27,7 @@
     return (G.difficultes && G.difficultes[G.difficultes.defaut||"legat"]) ||
            { nom:"Légat", seuilRevolte:30, seuilPaix:42, attenuation:0.5, bleed:2, revenuMod:1, malusActeMod:1 };
   }
-  function init(){ etat=Object.assign({},G.etatInitial); flags={}; persistants=[]; idx=0; enRevolte=false; if(!DIFF)DIFF=diffDefaut(); }
+  function init(){ etat=Object.assign({},G.etatInitial); flags={}; persistants=[]; idx=0; enRevolte=false; journal=[]; if(!DIFF)DIFF=diffDefaut(); }
 
   function el(s){ return document.querySelector(s); }
   function creer(t,c,h){ var n=document.createElement(t); if(c)n.className=c; if(h!=null)n.innerHTML=h; return n; }
@@ -413,6 +414,9 @@
     var deltas={};
     if(opt.cout) deltas=fusion(deltas,appliquer({tresor:-opt.cout}));
     deltas=fusion(deltas,appliquer(eff));
+    // journal du mandat : impact propre de la décision (coût + effets), hors revenu passif
+    journal.push({ acte:e.acte||"", titre:e.titre||"", label:opt.label,
+                   consequence:opt.consequence+(note?" "+note:""), deltas:Object.assign({},deltas) });
     if(opt.flag) flags[opt.flag]=true;
     if(opt.persistant) persistants.push(opt.persistant);
     var revenuTxt="";
@@ -494,11 +498,7 @@
   function finEchec(type){
     var f=G.echecs[type]; rendreJauges();
     son("evenement","echec");
-    var bas=creer("div");
-    bas.appendChild(creer("div","kicker","Fin du mandat"));
-    bas.appendChild(creer("div","titre-acte",esc(f.titre)));
-    bas.appendChild(bilanJauges());
-    bas.appendChild(rejouer());
+    var bas=ecranBilan(f, "Fin du mandat");
     rendreScene({ perso:f.perso, expr:f.expr, ambiance:f.ambiance, nom:f.titre, texte:f.texte, html:bas });
   }
   function bilan(){
@@ -507,19 +507,121 @@
       Object.keys(cond).forEach(function(k){ if(etat[k]<cond[k]) ok=false; }); if(ok){ c=G.bilans[i]; break; } }
     rendreJauges();
     son("evenement", (etat.romanisation>=70 && etat.faveur>=55 && etat.stabilite>=45) ? "triomphe" : "fin");
-    var bas=creer("div");
-    bas.appendChild(creer("div","kicker","Fin du mandat · Bilan"));
-    bas.appendChild(creer("div","titre-acte",esc(c.titre)));
-    bas.appendChild(bilanJauges());
-    bas.appendChild(rejouer());
+    var bas=ecranBilan(c, "Fin du mandat · Bilan");
     rendreScene({ perso:c.perso, expr:c.expr, ambiance:c.ambiance, nom:"Bilan de ton mandat", texte:c.texte, html:bas });
   }
-  function bilanJauges(){
-    var box=creer("div","bilan-jauges");
-    G.jauges.forEach(function(j){ var v=etat[j.id]; var l=creer("div","bilan-ligne");
-      l.innerHTML='<span>'+esc(j.nom)+'</span><span class="bilan-v">'+v+(j.type==="res"?" deniers":" / 100")+'</span>'; box.appendChild(l); });
+
+  // contenu commun des écrans de fin : en-tête d'impression, verdict, trajectoire, journal, actions
+  function ecranBilan(verdict, kicker){
+    var bas=creer("div","bilan-bas");
+    bas.appendChild(enteteImpression(verdict.titre));        // visible à l'impression seulement
+    var tete=creer("div","bilan-entete");
+    tete.appendChild(creer("div","kicker",kicker));
+    if(DIFF && DIFF.nom) tete.appendChild(creer("div","bilan-niveau","Niveau : "+esc(DIFF.nom)));
+    bas.appendChild(tete);
+    bas.appendChild(creer("div","titre-acte",esc(verdict.titre)));
+    bas.appendChild(creer("p","verdict-print",esc(verdict.texte)));   // doublon du verdict, imprimé seulement
+    var grille=creer("div","bilan-grille");
+    grille.appendChild(trajectoireJauges());
+    grille.appendChild(journalMandat());
+    bas.appendChild(grille);
+    var act=rejouer(); act.classList.add("bilan-actions"); act.appendChild(boutonImprimer());
+    bas.appendChild(act);
+    return bas;
+  }
+
+  /* ---------- bilan : trajectoire des jauges (départ → fin) ---------- */
+  function railPct(j,v){ return (j.type==="res") ? clamp(v/200*100,0,100) : clamp(v,0,100); }
+  function couleurFill(j,v){ return j.couleur==="seuil" ? classeSeuil(v) : j.couleur; }
+  function trajectoireJauges(){
+    var box=creer("div","bilan-traj");
+    box.appendChild(creer("div","bilan-sous-tete","Trajectoire des jauges"));
+    G.jauges.forEach(function(j){
+      var s=G.etatInitial[j.id], e=etat[j.id], d=e-s, unite=(j.type==="res")?" d.":"";
+      var ligne=creer("div","traj-ligne");
+      var haut=creer("div","traj-haut");
+      haut.appendChild(creer("div","traj-nom",'<span class="traj-ic"><svg viewBox="0 0 24 24">'+(ICONES[j.icone]||"")+'</svg></span>'+esc(j.nom)));
+      var val=creer("div","traj-val");
+      val.appendChild(creer("span","traj-chiffres",esc(s+" \u2192 "+e+unite)));
+      val.appendChild(creer("span","chip-traj "+(d>0?"plus":(d<0?"moins":"nul")),(d>0?"+":"")+(d!==0?d:"\u00b10")));
+      haut.appendChild(val); ligne.appendChild(haut);
+      var rail=creer("div","rail traj-rail");
+      var fill=creer("div","fill "+couleurFill(j,e)); fill.style.width=railPct(j,e)+"%";
+      var dep=creer("span","traj-depart"); dep.style.left=railPct(j,s)+"%";
+      rail.appendChild(fill); rail.appendChild(dep); ligne.appendChild(rail);
+      box.appendChild(ligne);
+    });
+    box.appendChild(creer("div","traj-legende","Le trait marque la valeur de départ ; la barre, la valeur finale."));
     return box;
   }
+
+  /* ---------- bilan : journal du mandat (repliable par acte) ---------- */
+  function miniChips(deltas){
+    var ab={romanisation:"Rom.",stabilite:"Stab.",faveur:"Faveur",tresor:"Trésor"};
+    var wrap=creer("div","jrow-chips"); var any=false;
+    ["romanisation","stabilite","faveur","tresor"].forEach(function(k){
+      if(deltas && deltas[k]){ any=true;
+        wrap.appendChild(creer("span","mini-chip "+(deltas[k]>0?"plus":"moins"),ab[k]+" "+(deltas[k]>0?"+":"")+deltas[k])); }
+    });
+    return any?wrap:null;
+  }
+  var CHEVRON='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5l8 7-8 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  function journalMandat(){
+    var box=creer("div","bilan-journal");
+    box.appendChild(creer("div","bilan-sous-tete","Journal du mandat"));
+    if(!journal.length){ box.appendChild(creer("div","journal-vide","Aucune décision enregistrée.")); return box; }
+    var groupes=[], cur=null;
+    journal.forEach(function(en){
+      if(!cur || cur.acte!==en.acte){ cur={ acte:en.acte, items:[] }; groupes.push(cur); }
+      cur.items.push(en);
+    });
+    groupes.forEach(function(g,gi){
+      var ouvertParDefaut = (gi===0);
+      var grp=creer("div","jacte"+(ouvertParDefaut?" ouvert":""));
+      var tete=creer("button","jacte-tete"); tete.type="button";
+      tete.setAttribute("aria-expanded", ouvertParDefaut?"true":"false");
+      tete.innerHTML='<span class="jacte-chev">'+CHEVRON+'</span>'+
+                     '<span class="jacte-nom">'+esc(g.acte)+'</span>'+
+                     '<span class="jacte-compte">'+g.items.length+(g.items.length>1?" décisions":" décision")+'</span>';
+      var corps=creer("div","jacte-corps");
+      g.items.forEach(function(en){
+        var row=creer("div","jrow2");
+        row.appendChild(creer("div","jrow-titre",esc(en.label)));
+        var basr=creer("div","jrow-bas");
+        basr.appendChild(creer("span","jrow-cons",esc(en.consequence)));
+        var ch=miniChips(en.deltas); if(ch) basr.appendChild(ch);
+        row.appendChild(basr); corps.appendChild(row);
+      });
+      tete.addEventListener("click",function(){
+        var o=grp.classList.toggle("ouvert");
+        tete.setAttribute("aria-expanded", o?"true":"false");
+      });
+      grp.appendChild(tete); grp.appendChild(corps);
+      box.appendChild(grp);
+    });
+    return box;
+  }
+
+  /* ---------- bilan : impression (window.print + feuille @media print) ---------- */
+  function boutonImprimer(){
+    var b=creer("button","btn btn-second btn-imprimer"); b.type="button";
+    b.innerHTML='<svg viewBox="0 0 24 24" class="ic-print" aria-hidden="true"><path d="M6 9V3h12v6M6 18H4v-7h16v7h-2M8 14h8v6H8z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/></svg>Imprimer le bilan';
+    b.addEventListener("click",function(){ try{ window.print(); }catch(e){} });
+    return b;
+  }
+  function enteteImpression(titre){
+    var d=new Date(), date;
+    try{ date=d.toLocaleDateString("fr-CA"); }
+    catch(e){ date=d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2); }
+    var box=creer("div","print-entete");
+    box.innerHTML=
+      '<div class="pe-haut"><span class="pe-titre">Bilan de mandat — Legatus</span>'+
+      '<span class="pe-niveau">Niveau : '+esc((DIFF&&DIFF.nom)||"")+'</span></div>'+
+      '<div class="pe-ligne"><span>Nom : ______________________________</span>'+
+      '<span>Date : '+esc(date)+'</span></div>';
+    return box;
+  }
+
   function rejouer(){
     var act=creer("div","actions"); act.style.justifyContent="center";
     var b=creer("button","btn btn-primaire","Reprendre un nouveau mandat");

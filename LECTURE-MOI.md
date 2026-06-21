@@ -191,6 +191,30 @@ leurs effets sur les jauges, la conséquence affichée et le **« pourquoi »** 
 Les effets sont des hypothèses pédagogiques — **à valider et ajuster selon ton jugement**.
 Le dossier `outils/` contient le générateur des personnages (`gen.py`).
 
+## Bilan de fin de mandat
+
+Chaque partie se termine par un **bilan**, identique pour une fin réussie ou un échec
+(rappel, destitution). Il réunit :
+
+- le **verdict** (titre et texte selon l'état final) et le niveau joué ;
+- la **trajectoire des quatre jauges** : valeur de départ → valeur finale, avec l'écart
+  (le trait marque le départ, la barre la valeur atteinte). On y lit d'un coup d'œil le
+  compromis du mandat (ce qui a monté, ce qui a été sacrifié) ;
+- le **journal du mandat**, **repliable par acte** : pour chaque décision, le choix
+  retenu, sa conséquence et son impact sur les jauges. Le premier acte est déplié par
+  défaut ; on clique sur un acte pour le déplier ou le replier. Le journal s'alimente
+  tout seul au fil de la partie.
+
+### Imprimer le bilan
+
+Le bouton **« Imprimer le bilan »** appelle l'impression du navigateur (équivalent de
+Ctrl+P) : aucune librairie, tout reste hors-ligne. Une feuille de style `@media print`
+transforme l'écran en **fiche papier propre** : elle **déplie tous les actes** (les 20
+décisions s'impriment), masque l'en-tête du jeu, le tableau de bord, les boutons et les
+décors, passe en noir sur blanc, et ajoute un **en-tête imprimé** — « Bilan de mandat —
+Legatus », le **niveau**, une ligne **« Nom : ____ »** et la **date** — pratique pour
+une remise.
+
 ## Validation
 
 20 décisions, 5 actes, intermèdes, effet conditionnel de la curie, conséquence
