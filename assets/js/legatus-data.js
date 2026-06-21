@@ -193,8 +193,8 @@ window.LEGATUS = {
     {
       type:"evenement", id:"commerce", acte:"Acte III : Vivre en Romain",
       acteIntro:"Une génération a passé. Les villes prospèrent, hérissées de monuments. Reste à gagner les cœurs et les esprits : la culture, la foi, le droit de cité.",
-      controleRome:{ seuil:32, rappel:16, malus:12, faveurRappel:22 },
-      acteMalus:{ stabilite:-10 }, acteMalusNote:"Le temps passe : tenir les acquis devient plus dur (stabilité −10).",
+      controleRome:{ seuil:26, rappel:14, malus:7, faveurRappel:13 },
+      acteMalus:{ stabilite:-6 }, acteMalusNote:"Le temps passe : tenir les acquis devient plus dur (stabilité −6).",
       perso:"marchand", expr:"neutre", ambiance:"jour", nom:"Quintus, un marchand",
       titre:"Les marchands de la voie",
       source:{ texte:"L’orateur grec Aelius Aristide s’émerveille que les marchandises du monde entier affluent à Rome par mer et par route : le commerce tisse l’unité de l’Empire et diffuse partout ses usages.", ref:"D’après Aelius Aristide, Éloge de Rome (vers 143), adaptation" },
@@ -277,8 +277,8 @@ window.LEGATUS = {
     {
       type:"evenement", id:"revolte", acte:"Acte IV : Tenir l'Empire",
       acteIntro:"Les décennies filent. L'Empire est à son apogée, mais sa grandeur même devient un fardeau. Des fissures apparaissent, au-dedans comme aux frontières.",
-      controleRome:{ seuil:50, rappel:32, malus:15, faveurRappel:30 },
-      acteMalus:{ stabilite:-18 }, acteMalusNote:"La pression des crises ébranle la province (stabilité −18).",
+      controleRome:{ seuil:40, rappel:27, malus:9, faveurRappel:18 },
+      acteMalus:{ stabilite:-11 }, acteMalusNote:"La pression des crises ébranle la province (stabilité −11).",
       perso:"gaulois", expr:"severe", ambiance:"danger", nom:"Diviciacos, chef éduen",
       titre:"La révolte des Éduens",
       source:{ texte:"En l’an 21, deux notables gaulois pourtant romanisés et citoyens romains, l’Éduen Julius Sacrovir et le Trévire Julius Florus, soulèvent leurs cités écrasées de dettes et d’impôts. Les légions de Germanie matent la révolte.", ref:"D’après Tacite, Annales, livre III (révolte de 21), adaptation" },
@@ -316,7 +316,10 @@ window.LEGATUS = {
           pourquoi:"Les légions sécurisaient vite, mais coûtaient cher et n'intégraient pas la population." },
         { label:"Négocier et verser un tribut aux chefs germains", effets:{ tresor:-35, stabilite:4, faveur:-10 }, persistant:{ tresor:-5 },
           consequence:"L'or achète la paix sur le Rhin. La frontière se calme, mais Rome juge le procédé indigne.",
-          pourquoi:"Acheter la paix évitait la guerre, mais affaiblissait le prestige de Rome." }
+          pourquoi:"Acheter la paix évitait la guerre, mais affaiblissait le prestige de Rome." },
+        { label:"Laisser les cités se défendre seules", effets:{ stabilite:-10, romanisation:-4, faveur:-6 },
+          consequence:"Sans renforts ni tribut, chaque cité se débrouille. Les campagnes sont pillées, des terres se vident et la frontière recule.",
+          pourquoi:"Faute d'armée ou de tribut, Rome perdait le contrôle de ses confins : les campagnes se dépeuplaient et la frontière s'effritait." }
       ]
     },
     {
@@ -383,8 +386,8 @@ window.LEGATUS = {
     {
       type:"evenement", id:"religion", acte:"Acte V : Le tournant chrétien",
       acteIntro:"Près de deux siècles ont passé. L'Empire que tu sers a changé de visage : une foi venue d'Orient gagne les villes et bouleverse l'ordre romain. Rien ne sera plus comme avant.",
-      controleRome:{ seuil:65, rappel:48, malus:15, faveurRappel:38 },
-      acteMalus:{ stabilite:-16, faveur:-8 }, acteMalusNote:"Le grand bouleversement religieux secoue l'Empire (stabilité −16, faveur −8).",
+      controleRome:{ seuil:52, rappel:41, malus:9, faveurRappel:23 },
+      acteMalus:{ stabilite:-10, faveur:-5 }, acteMalusNote:"Le grand bouleversement religieux secoue l'Empire (stabilité −10, faveur −5).",
       perso:"conseiller", expr:"inquiet", ambiance:"jour", nom:"Marcus, ton conseiller",
       titre:"Une religion nouvelle",
       source:{ texte:"Gouverneur en Asie, Pline le Jeune écrit à l’empereur Trajan pour savoir comment juger les chrétiens : ils refusent d’honorer l’empereur comme un dieu, mais se réunissent paisiblement avant l’aube pour chanter leur propre dieu.", ref:"D’après Pline le Jeune, Lettres, X, 96 (vers 112), adaptation" },
@@ -476,11 +479,11 @@ window.LEGATUS = {
   difficultes:{
     defaut:"legat", ordre:["apprenti","legat","imperator"],
     apprenti:{ nom:"Apprenti", sous:"Pour découvrir, marge d'erreur large",
-      seuilRevolte:20, seuilPaix:30, attenuation:0.7, bleed:1, revenuMod:1.2, malusActeMod:0.5 },
+      seuilRevolte:15, seuilPaix:30, attenuation:0.8, bleed:0, revenuMod:1.2, malusActeMod:0.5 },
     legat:{ nom:"Légat", sous:"L'expérience équilibrée",
-      seuilRevolte:30, seuilPaix:42, attenuation:0.5, bleed:2, revenuMod:1, malusActeMod:1 },
+      seuilRevolte:25, seuilPaix:42, attenuation:0.6, bleed:1, revenuMod:1, malusActeMod:1 },
     imperator:{ nom:"Imperator", sous:"Pour les stratèges aguerris",
-      seuilRevolte:40, seuilPaix:50, attenuation:0.35, bleed:3, revenuMod:0.85, malusActeMod:1.4 }
+      seuilRevolte:35, seuilPaix:50, attenuation:0.45, bleed:2, revenuMod:0.85, malusActeMod:1.4 }
   },
 
   echecs:{
@@ -493,13 +496,13 @@ window.LEGATUS = {
   },
 
   bilans:[
-    { si:{ romanisation:85, stabilite:65, faveur:55 }, perso:"empereur", expr:"content", ambiance:"solennel",
+    { si:{ romanisation:77, stabilite:59, faveur:50 }, perso:"empereur", expr:"content", ambiance:"solennel",
       titre:"Apogée : une œuvre pour les siècles",
       texte:"Tu as romanisé la province en profondeur, traversé les pires crises sans la laisser sombrer, et accompagné le grand basculement chrétien sans déchirer l'Empire. Peu de gouverneurs auront tenu pareil équilibre sur une si longue durée. Ton nom restera." },
-    { si:{ romanisation:62, stabilite:48, faveur:40 }, perso:"empereur", expr:"content", ambiance:"solennel",
+    { si:{ romanisation:56, stabilite:43, faveur:36 }, perso:"empereur", expr:"content", ambiance:"solennel",
       titre:"Un héritage romain durable",
       texte:"La Gaule est devenue romaine (langue, droit, villes, citoyens) et chrétienne avec l'Empire. Quelques secousses, mais l'essentiel tient. La romanisation a réussi, par l'intégration plus que par la conquête." },
-    { si:{ romanisation:42, stabilite:28 }, perso:"conseiller", expr:"neutre", ambiance:"jour",
+    { si:{ romanisation:38, stabilite:25 }, perso:"conseiller", expr:"neutre", ambiance:"jour",
       titre:"Une romanisation inachevée",
       texte:"Rome a laissé son empreinte, mais l'enracinement reste fragile, ou bien tu as poussé si fort qu'à force de crises l'édifice a vacillé. L'équilibre, sur la durée, t'a manqué." },
     { si:{}, perso:"gaulois", expr:"neutre", ambiance:"jour",

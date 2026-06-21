@@ -326,9 +326,12 @@
     e.options.forEach(function(opt){
       var b=creer("button","option"); b.type="button";
       var t=creer("div","option-titre",esc(opt.label));
-      if(opt.cout>0) t.appendChild(creer("span","cout","− "+opt.cout+" d."));
+      // coût immédiat réel = coût explicite + dépense cachée dans les effets (tribut, armée…)
+      var effActifs=(opt.effetsSi && flags[opt.effetsSi.flag]) ? (opt.effetsSi.effets||{}) : (opt.effets||{});
+      var coutImmediat=(opt.cout||0)+Math.max(0,-(effActifs.tresor||0));
+      if(coutImmediat>0) t.appendChild(creer("span","cout","− "+coutImmediat+" d."));
       b.appendChild(t);
-      var dispo=!(opt.cout>0 && etat.tresor<opt.cout);
+      var dispo=etat.tresor>=coutImmediat;
       if(!dispo){ b.classList.add("indispo"); b.disabled=true; b.appendChild(creer("div","option-sous","Trésor insuffisant")); }
       b.addEventListener("click",function(){ if(dispo) choisir(e,opt); });
       boutonsChoix.push({ btn:b, dispo:dispo });

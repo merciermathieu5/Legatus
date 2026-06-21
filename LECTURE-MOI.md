@@ -132,9 +132,9 @@ avec le bilan financier du tour), un encadré **« Pourquoi ? »**, et le bouton
 Romaniser n'est pas optionnel : c'est la **mission**. Aux entrées des actes III, IV
 et V, **Rome contrôle tes progrès** (champ `controleRome`) :
 
-- si la Romanisation est **sous le seuil de rappel** (16 / 32 / 48), c'est la
+- si la Romanisation est **sous le seuil de rappel** (14 / 27 / 41), c'est la
   **défaite immédiate** : « *Rappelé : la mission de Rome trahie* » ;
-- si elle est seulement **basse** (sous 32 / 50 / 65), la **Faveur chute** et un
+- si elle est seulement **basse** (sous 26 / 40 / 52), la **Faveur chute** et un
   avertissement s'affiche.
 
 De plus, **faire passer la province avant Rome coûte cher en Faveur** : respecter
@@ -142,7 +142,7 @@ les langues, laisser les cultes locaux, baisser les impôts, verser un tribut,
 refuser de persécuter, s'opposer à la citoyenneté… toutes ces options pèsent
 lourdement sur la faveur de l'empereur (jusqu'à −13). À force, c'est la
 **destitution**. Bref, deux façons de perdre par mauvaise romanisation : le
-**rappel** (progrès de romanisation insuffisants) et la **destitution** par l'empereur. À chaque **revue d'acte** (actes III, IV, V), si la **Faveur de Rome** est trop basse (sous **22**, puis **30**, puis **38** — les attentes de Rome montent), le gouverneur est **rappelé**. Un avertissement prévient quand la faveur approche du seuil. La faveur à 0 met fin au mandat immédiatement.
+**rappel** (progrès de romanisation insuffisants) et la **destitution** par l'empereur. À chaque **revue d'acte** (actes III, IV, V), si la **Faveur de Rome** est trop basse (sous **13**, puis **18**, puis **23** — les attentes de Rome montent), le gouverneur est **rappelé**. Un avertissement prévient quand la faveur approche du seuil. La faveur à 0 met fin au mandat immédiatement.
 
 ## Impact financier durable des choix
 
@@ -159,6 +159,15 @@ Les choix ne pèsent plus seulement sur le tour courant : beaucoup laissent une
   auxiliaires (−25 d. puis −5 / tour), faire venir des légions (−45 puis −8),
   verser un tribut (−35 puis −5), mobiliser tout l'Empire (−50 puis −8), tenir
   le limes (−45 puis −8). Une province militarisée voit son **revenu fondre**.
+
+**Une option qu'on ne peut pas payer est bloquée.** Le coût pris en compte est le coût
+*réel et immédiat* : non seulement le prix d'un chantier (`cout`), mais aussi la
+dépense cachée dans les effets (verser un **tribut**, **lever ou faire venir l'armée**,
+**mobiliser** : ces options dépensent le trésor via leurs effets). Le prix s'affiche sur
+le bouton (« − 35 d. ») et l'option est grisée avec « Trésor insuffisant » tant que le
+trésor ne suffit pas. Pour éviter tout blocage quand la province est à sec, la décision
+**« Les frontières menacées »** offre une option **sans coût** — *« Laisser les cités se
+défendre seules »* — au prix de la stabilité et d'un recul de la romanisation.
 
 ### Les impôts croissent avec la romanisation
 
@@ -187,9 +196,9 @@ dans `legatus-data.js`.
 
 Les réglages sont **durcis** pour sanctionner les choix faibles :
 
-- **Bilans plus stricts** — l'Apogée exige romanisation ≥ 85, stabilité ≥ 65 et
-  faveur ≥ 55 ; un héritage « durable » exige 62 / 48 / 40 ; en deçà, « inachevée »
-  puis « effacée ».
+- **Bilans accessibles mais exigeants** — l'Apogée demande romanisation ≥ 77,
+  stabilité ≥ 59 et faveur ≥ 50 ; un héritage « durable » demande 56 / 43 / 36 ; en
+  deçà, « inachevée » puis « effacée ».
 - **Pression d'acte accrue** — chaque nouvel acte (III, IV, V) entame la stabilité
   (jusqu'à −18) et la faveur.
 - **Économie serrée** — chantiers chers (grand aqueduc 80 d., thermes 70 d., forum
