@@ -160,13 +160,28 @@ Les choix ne pèsent plus seulement sur le tour courant : beaucoup laissent une
   verser un tribut (−35 puis −5), mobiliser tout l'Empire (−50 puis −8), tenir
   le limes (−45 puis −8). Une province militarisée voit son **revenu fondre**.
 
+### Les impôts croissent avec la romanisation
+
+Le **revenu fiscal n'est plus une valeur fixe** : il **augmente à mesure que tu
+romanises la province** — une province urbanisée et monétarisée a une assiette fiscale
+plus large. L'impôt par tour vaut :
+
+`impôt = (socle + romanisation × pente) × facteur de perception × modificateur de niveau`
+
+avec, par défaut (`G.revenu`), `socle = 10` et `pente = 0,20` : l'impôt passe d'environ
+**12 d. / tour** en début de partie (romanisation faible) à **30 d. / tour** quand la
+province est pleinement romanisée. Le **facteur de perception** vaut 1 si la province
+est stable, et **0,5 sous le seuil de stabilité** (45) : une province instable rentre
+mal ses impôts. En **révolte**, les impôts tombent à zéro. Tout est paramétrable dans
+`G.revenu` (`socle`, `parRomanisation`, `seuil`, `facteurInstable`) sans toucher au
+moteur.
+
 Le **revenu net par tour** s'affiche sous le Trésor : `impôts + commerce −
-entretien`. Il **baisse quand la province est instable** (impôts réduits) et, en
+entretien`. Il **baisse quand la province est instable** (impôts à demi-perçus) et, en
 **révolte**, les impôts et le commerce tombent à zéro tandis que l'entretien continue
-de peser — le revenu peut alors devenir **négatif** (affiché en rouge). Il faut donc
-financer les chantiers et l'armée par un **commerce qui se développe**, pas seulement
-par le trésor de départ. Les valeurs sont dans le champ `persistant` des options
-(`legatus-data.js`).
+de peser — le revenu peut alors devenir **négatif** (affiché en rouge). Le commerce que
+tu développes (champ `persistant`) vient s'ajouter par-dessus l'impôt. Les valeurs sont
+dans `legatus-data.js`.
 
 
 

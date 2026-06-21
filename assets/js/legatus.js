@@ -41,7 +41,15 @@
   function bilanRevenu(){
     var commerce=0, entretien=0;
     persistants.forEach(function(p){ var v=(p&&p.tresor)||0; if(v>=0) commerce+=v; else entretien+=v; });
-    var base = enRevolte ? 0 : Math.round(((etat.stabilite>=G.revenu.seuil)?G.revenu.haut:G.revenu.bas)*(DIFF.revenuMod||1));
+    // Impôts : l'assiette croît avec la romanisation (province urbanisée, monétarisée) ;
+    // la stabilité fait office de facteur de perception. Révolte = impôts suspendus.
+    var base;
+    if(enRevolte){ base=0; }
+    else {
+      var assiette = (G.revenu.socle||0) + etat.romanisation*(G.revenu.parRomanisation||0);
+      var facteur = (etat.stabilite>=G.revenu.seuil) ? 1 : (G.revenu.facteurInstable!=null?G.revenu.facteurInstable:0.5);
+      base = Math.round(assiette*facteur*(DIFF.revenuMod||1));
+    }
     if(enRevolte) commerce=0;            // commerce paralysé par la révolte ; l'entretien continue de peser
     return { base:base, commerce:commerce, entretien:entretien, net:base+commerce+entretien };
   }

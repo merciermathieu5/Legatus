@@ -466,7 +466,7 @@ window.LEGATUS = {
     }
   ],
 
-  revenu:{ haut:12, bas:4, seuil:45, texte:"Récolte des impôts" },
+  revenu:{ socle:10, parRomanisation:0.20, seuil:45, facteurInstable:0.5, texte:"Récolte des impôts" },
 
   /* Niveaux de difficulté. seuilRevolte = stabilité sous laquelle une province se
      soulève ; seuilPaix = stabilité à retrouver pour la pacifier (bande d'hystérésis).
