@@ -228,6 +228,17 @@ Chaque partie se termine par un **bilan**, identique pour une fin réussie ou un
   retenu, sa conséquence et son impact sur les jauges. Le premier acte est déplié par
   défaut ; on clique sur un acte pour le déplier ou le replier. Le journal s'alimente
   tout seul au fil de la partie.
+- les **points forts** de l'élève, déduits de l'état final (romanisation, stabilité,
+  faveur, finances), de l'absence de révolte et du respect des sources.
+- les **décisions à revoir — documents négligés** : la liste des choix où l'élève est
+  allé à l'encontre de ce que montraient les documents, avec une courte justification.
+  Si aucun, un message positif le souligne.
+
+Les notes « documents négligés » vivent dans un **bloc unique et éditable** de
+`legatus-data.js` (`docAlerts`), de la forme `{ idÉtape : { indiceOption : "note" } }`.
+C'est une **première passe** : à réviser et compléter selon ton jugement pédagogique
+(les documents sont d'abord faits pour être *confrontés*, pas pour dicter une seule
+bonne réponse).
 
 ### Imprimer le bilan
 

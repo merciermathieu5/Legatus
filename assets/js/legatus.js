@@ -18,6 +18,7 @@
   var etat, flags, persistants, idx, enRevolte, DIFF;
   var GEN_VERROU=0;   // jeton de génération : invalide un compte à rebours quand la scène change
   var journal=[];     // journal du mandat : une entrée par décision (pour le bilan de fin)
+  var aConnuRevolte=false;  // au moins une révolte a éclaté durant le mandat ?
 
   // pont vers la trame sonore (sans planter si l'audio est indisponible)
   function son(m,a,b){ try{ var A=window.AudioLegatus; if(A&&A[m]) A[m](a,b); }catch(e){} }
@@ -27,7 +28,7 @@
     return (G.difficultes && G.difficultes[G.difficultes.defaut||"legat"]) ||
            { nom:"Légat", seuilRevolte:30, seuilPaix:42, attenuation:0.5, bleed:2, revenuMod:1, malusActeMod:1 };
   }
-  function init(){ etat=Object.assign({},G.etatInitial); flags={}; persistants=[]; idx=0; enRevolte=false; journal=[]; if(!DIFF)DIFF=diffDefaut(); }
+  function init(){ etat=Object.assign({},G.etatInitial); flags={}; persistants=[]; idx=0; enRevolte=false; journal=[]; aConnuRevolte=false; if(!DIFF)DIFF=diffDefaut(); }
 
   function el(s){ return document.querySelector(s); }
   function creer(t,c,h){ var n=document.createElement(t); if(c)n.className=c; if(h!=null)n.innerHTML=h; return n; }
@@ -102,7 +103,7 @@
   // Met à jour l'état de révolte d'après la stabilité courante ; renvoie le message à afficher.
   function majRevolte(deltas){
     if(!enRevolte && etat.stabilite < DIFF.seuilRevolte){
-      enRevolte=true; ajoute(deltas, appliquer({faveur:-5}));
+      enRevolte=true; aConnuRevolte=true; ajoute(deltas, appliquer({faveur:-5}));
       return "\u2694 Une province se soulève ! Tant qu'elle gronde, les progrès de la Romanisation et de la Faveur sont freinés et les impôts ne rentrent plus. Rétablis la stabilité (\u2265 "+DIFF.seuilPaix+") pour la pacifier.";
     }
     if(enRevolte && etat.stabilite >= DIFF.seuilPaix){
@@ -426,8 +427,10 @@
     if(opt.cout) deltas=fusion(deltas,appliquer({tresor:-opt.cout}));
     deltas=fusion(deltas,appliquer(eff));
     // journal du mandat : impact propre de la décision (coût + effets), hors revenu passif
+    var ci=e.options.indexOf(opt);
+    var dAlerte=(G.docAlerts && G.docAlerts[e.id] && G.docAlerts[e.id][ci]) || null;
     journal.push({ acte:e.acte||"", titre:e.titre||"", label:opt.label,
-                   consequence:opt.consequence+(note?" "+note:""), deltas:Object.assign({},deltas) });
+                   consequence:opt.consequence+(note?" "+note:""), deltas:Object.assign({},deltas), contreDoc:dAlerte });
     if(opt.flag) flags[opt.flag]=true;
     if(opt.persistant) persistants.push(opt.persistant);
     var revenuTxt="";
@@ -536,6 +539,8 @@
     grille.appendChild(trajectoireJauges());
     grille.appendChild(journalMandat());
     bas.appendChild(grille);
+    bas.appendChild(pointsFortsBloc());
+    bas.appendChild(sourcesNegligeesBloc());
     var act=rejouer(); act.classList.add("bilan-actions"); act.appendChild(boutonImprimer());
     bas.appendChild(act);
     return bas;
@@ -609,6 +614,46 @@
       });
       grp.appendChild(tete); grp.appendChild(corps);
       box.appendChild(grp);
+    });
+    return box;
+  }
+
+  /* ---------- bilan : points forts + documents négligés ---------- */
+  function pointsForts(){
+    var s=etat, pts=[];
+    var cand=[
+      { v:s.romanisation, t: s.romanisation>=70?"Romanisation profonde et durable de la province.":(s.romanisation>=50?"Rome solidement implantée dans la province.":null) },
+      { v:s.stabilite,    t: s.stabilite>=60?"Province stable et apaisée tout au long du mandat.":(s.stabilite>=45?"Stabilité maintenue malgré les crises.":null) },
+      { v:s.faveur,       t: s.faveur>=55?"Confiance de Rome préservée d'un bout à l'autre.":(s.faveur>=42?"Faveur de Rome tenue à flot.":null) },
+      { v:s.tresor,       t: s.tresor>=180?"Finances saines : un trésor solide en fin de mandat.":(s.tresor>=120?"Finances bien gérées.":null) }
+    ];
+    cand.filter(function(c){return c.t;}).sort(function(a,b){return b.v-a.v;}).slice(0,3).forEach(function(c){ pts.push(c.t); });
+    if(!aConnuRevolte) pts.push("Aucune révolte n'a éclaté durant ton mandat.");
+    var ign=journal.filter(function(j){return j.contreDoc;}).length;
+    if(ign===0) pts.push("Tu as tenu compte des documents à chaque décision.");
+    else if(ign<=2) pts.push("Tu as presque toujours suivi les documents (seulement "+ign+" écart"+(ign>1?"s":"")+").");
+    if(!pts.length) pts.push("Tu as mené ton mandat jusqu'au bout malgré l'adversité.");
+    return pts.slice(0,4);
+  }
+  function pointsFortsBloc(){
+    var box=creer("div","bilan-forts");
+    box.appendChild(creer("div","bilan-sous-tete","Points forts"));
+    var ul=creer("ul","forts-liste");
+    pointsForts().forEach(function(t){ var li=document.createElement("li"); li.textContent=t; ul.appendChild(li); });
+    box.appendChild(ul);
+    return box;
+  }
+  function sourcesNegligeesBloc(){
+    var liste=journal.filter(function(j){ return j.contreDoc; });
+    var box=creer("div","bilan-negligees");
+    box.appendChild(creer("div","bilan-sous-tete","Décisions à revoir \u2014 documents négligés"));
+    if(!liste.length){ box.appendChild(creer("div","negligees-vide","Aucune : à chaque décision, ton choix tenait compte des documents. Beau travail de lecture des sources.")); return box; }
+    box.appendChild(creer("div","negligees-intro","Lors de ces décisions, ton choix est allé à l'encontre de ce que les documents indiquaient :"));
+    liste.forEach(function(j){
+      var item=creer("div","neg-item");
+      item.appendChild(creer("div","neg-titre",esc(j.titre)+" \u2014 "+esc(j.label)));
+      item.appendChild(creer("div","neg-note",esc(j.contreDoc)));
+      box.appendChild(item);
     });
     return box;
   }

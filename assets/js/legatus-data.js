@@ -359,7 +359,10 @@ window.LEGATUS = {
           pourquoi:"Dévaluer la monnaie pour financer l'armée provoqua une inflation qui ruina l'économie de l'Empire." },
         { label:"Réduire l'armée pour souffler", effets:{ tresor:10, stabilite:-3, faveur:-6 }, persistant:{ tresor:3 },
           consequence:"Le trésor respire, mais les frontières se dégarnissent, un pari dangereux.",
-          pourquoi:"Réduire l'armée soulageait les finances, mais exposait l'Empire aux invasions." }
+          pourquoi:"Réduire l'armée soulageait les finances, mais exposait l'Empire aux invasions." },
+        { label:"Payer la solde sur le trésor (100 d.)", cout:100, effets:{ stabilite:4, faveur:3 },
+          consequence:"Les légions sont payées en bonne monnaie, sans nouvel impôt ni dévaluation. Elles restent loyales, et Rome apprécie une province qui se tient.",
+          pourquoi:"Payer l'armée en monnaie saine à même le trésor préservait l'économie, mais peu de gouverneurs en avaient les moyens." }
       ]
     },
     {
@@ -471,6 +474,29 @@ window.LEGATUS = {
 
   revenu:{ socle:10, parRomanisation:0.20, seuil:45, facteurInstable:0.5, texte:"Récolte des impôts" },
 
+  /* Décisions qui ne respectent pas l’information des documents : { idÉtape : { indiceOption : note } }.
+     Affichées dans le bilan (« documents négligés »). PREMIÈRE PASSE — à réviser et compléter selon ton jugement. */
+  docAlerts:{
+    langue:{ 0:"Le document d’Irénée montrait que les langues locales résistaient longtemps : imposer le latin d’un coup ignorait cette réalité.",
+             2:"Le document de Tacite présentait le latin comme le vecteur de la romanisation attendue par Rome : tout laisser en gaulois passait à côté." },
+    droit:{ 0:"Le document sur la pratique romaine rappelait que Rome laissait souvent les cités garder leurs lois : tout imposer d’un coup l’ignorait.",
+            2:"Le document de Cicéron présentait le droit commun comme le ciment de la communauté romaine : tout laisser coutumier l’écartait." },
+    culte:{ 0:"Le document sur les Juifs et les chrétiens montrait qu’ils refusaient ce culte comme une idolâtrie : l’imposer de force heurtait ces croyances." },
+    commerce:{ 0:"Le document d’Aelius Aristide montrait le commerce comme source de richesse et de diffusion de Rome : le surtaxer l’étouffait." },
+    ecole:{ 0:"Le second document avertissait que l’école ne touchait que les fils de notables et creusait l’écart avec le peuple : la réserver aux élites accentuait cet écart.",
+            2:"Le document d’Eumène plaidait pour les écoles comme levier de romanisation : n’en financer aucune manquait l’occasion." },
+    citoyennete:{ 2:"Le document sur l’édit de Caracalla montrait l’intégration par la citoyenneté comme l’aboutissement de la romanisation : la refuser allait à son encontre." },
+    revolte:{ 0:"Le document montrait que même des Gaulois romanisés et citoyens (Sacrovir) s’étaient révoltés par grief : la seule force traitait le symptôme, pas la cause." },
+    frontiere:{ 3:"Les documents montraient une frontière qu’il fallait sans cesse défendre : l’abandonner aux cités seules laissait les confins s’effriter." },
+    crise3e:{ 2:"Le document d’Hérodien décrivait un Empire qui vacille sous les invasions : espérer sans agir laissait la crise l’emporter." },
+    armee:{ 1:"Les documents sur l’édit de Dioclétien montraient que dévaluer la monnaie nourrissait l’inflation qui ruinait l’Empire : rogner la monnaie aggravait le mal." },
+    vaste:{ 2:"Les documents montraient l’Empire trop vaste pour un seul homme : prétendre tout gouverner seul allait contre ce constat." },
+    religion:{ 0:"Le document de Pline montrait des chrétiens paisibles refusant ce culte au péril de leur vie : l’exiger nourrissait la tension plutôt que l’ordre." },
+    persecution:{ 0:"Le document de Tertullien avertissait que « le sang des martyrs est une semence » : persécuter durement renforçait le christianisme au lieu de l’éteindre." },
+    milan:{ 2:"Le document sur l’édit de Milan posait la liberté de culte voulue par l’empereur : y résister défiait la politique impériale et l’histoire en marche." },
+    etat:{ 0:"Le document de Libanius suppliait d’épargner les temples et les anciens cultes : imposer une seule foi par la loi se fit dans la violence qu’il redoutait." }
+  },
+
   /* Niveaux de difficulté. seuilRevolte = stabilité sous laquelle une province se
      soulève ; seuilPaix = stabilité à retrouver pour la pacifier (bande d'hystérésis).
      attenuation = facteur appliqué aux gains de Romanisation/Faveur pendant la révolte ;
@@ -499,7 +525,7 @@ window.LEGATUS = {
     { si:{ romanisation:77, stabilite:59, faveur:50 }, perso:"empereur", expr:"content", ambiance:"solennel",
       titre:"Apogée : une œuvre pour les siècles",
       texte:"Tu as romanisé la province en profondeur, traversé les pires crises sans la laisser sombrer, et accompagné le grand basculement chrétien sans déchirer l'Empire. Peu de gouverneurs auront tenu pareil équilibre sur une si longue durée. Ton nom restera." },
-    { si:{ romanisation:56, stabilite:43, faveur:36 }, perso:"empereur", expr:"content", ambiance:"solennel",
+    { si:{ romanisation:64, stabilite:49, faveur:42 }, perso:"empereur", expr:"content", ambiance:"solennel",
       titre:"Un héritage romain durable",
       texte:"La Gaule est devenue romaine (langue, droit, villes, citoyens) et chrétienne avec l'Empire. Quelques secousses, mais l'essentiel tient. La romanisation a réussi, par l'intégration plus que par la conquête." },
     { si:{ romanisation:38, stabilite:25 }, perso:"conseiller", expr:"neutre", ambiance:"jour",

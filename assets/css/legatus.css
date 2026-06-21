@@ -604,8 +604,24 @@ header.tete{ display:none; }                 /* titre porté par l'accueil + l'o
 
 @media (max-width:760px){ .bilan-grille{grid-template-columns:1fr} }
 
+.bilan-forts{margin-top:13px;background:var(--olive-clair);border:2px solid var(--olive);border-radius:8px;padding:12px 15px}
+.bilan-forts .bilan-sous-tete{color:var(--olive);margin-bottom:8px}
+.forts-liste{margin:0;padding:0;list-style:none}
+.forts-liste li{position:relative;padding-left:22px;margin:5px 0;font-size:13.5px;line-height:1.45;color:var(--encre)}
+.forts-liste li::before{content:"\2714";position:absolute;left:0;color:var(--olive);font-weight:700}
+.bilan-negligees{margin-top:11px;background:var(--bronze-clair);border:2px solid #D9C79A;border-left:5px solid var(--bronze);border-radius:0 8px 8px 0;padding:12px 15px}
+.bilan-negligees .bilan-sous-tete{color:var(--bronze);margin-bottom:8px}
+.negligees-intro{font-size:12.5px;color:var(--encre-doux);margin-bottom:9px}
+.negligees-vide{font-size:13px;color:var(--olive);font-weight:500;line-height:1.45}
+.neg-item{padding:8px 0;border-top:1px solid #e6d9b8}
+.neg-item:first-of-type{border-top:none}
+.neg-titre{font-weight:600;font-size:13px;color:var(--pourpre)}
+.neg-note{font-size:12.5px;color:var(--encre);line-height:1.5;margin-top:3px}
+
 @media print{
   header.tete,#son-toggle,#jauges,.scene-doc,.bilan-actions,.bilan-niveau,.traj-legende,.jacte-chev{display:none !important}
+  .bilan-forts,.bilan-negligees{background:#fff !important;border:1px solid #888 !important;page-break-inside:avoid;margin-top:12px}
+  .bilan-forts .bilan-sous-tete,.bilan-negligees .bilan-sous-tete,.neg-titre,.neg-note,.negligees-intro,.forts-liste li{color:#000 !important}
   body{background:#fff !important;background-image:none !important;color:#000}
   .wrap{max-width:none;padding:0}
   .print-entete{display:block !important;margin:0 0 14px;border-bottom:2px solid #000;padding-bottom:8px}
