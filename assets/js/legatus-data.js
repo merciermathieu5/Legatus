@@ -218,7 +218,7 @@ window.LEGATUS = {
       perso:"conseiller", expr:"neutre", ambiance:"jour", nom:"Marcus, ton conseiller",
       titre:"Le culte impérial",
       source:{ texte:"Chaque année, les délégués des cités gauloises se réunissaient à l’autel de Rome et d’Auguste, à Lyon, pour honorer l’empereur. Ce culte commun soudait la province à l’Empire.", ref:"D’après la dédicace de l’autel de Lugdunum (Lyon, 12 av. J.-C.), adaptation" },
-      source2:{ texte:"Mais Juifs et chrétiens refusaient de sacrifier à l’empereur, y voyant une idolâtrie. Pour eux, ce culte commun n’unissait pas : il opprimait les consciences.", ref:"D’après Flavius Josèphe et les Actes des martyrs, adaptation" },
+      source2:{ texte:"Mais Juifs et chrétiens refusaient d’honorer l’empereur comme un dieu, y voyant une idolâtrie. Pour eux, ce culte commun n’unissait pas : il opprimait les consciences.", ref:"D’après Flavius Josèphe et les Actes des martyrs, adaptation" },
       contexte:"Rome veut qu'on honore l'empereur comme un dieu, légat. L'imposer aux Gaulois ?",
       revenuApres:true,
       options:[
@@ -387,12 +387,12 @@ window.LEGATUS = {
       acteMalus:{ stabilite:-16, faveur:-8 }, acteMalusNote:"Le grand bouleversement religieux secoue l'Empire (stabilité −16, faveur −8).",
       perso:"conseiller", expr:"inquiet", ambiance:"jour", nom:"Marcus, ton conseiller",
       titre:"Une religion nouvelle",
-      source:{ texte:"Gouverneur en Asie, Pline le Jeune écrit à l’empereur Trajan pour savoir comment juger les chrétiens : ils refusent de sacrifier à l’empereur, mais se réunissent paisiblement avant l’aube pour chanter leur dieu.", ref:"D’après Pline le Jeune, Lettres, X, 96 (vers 112), adaptation" },
+      source:{ texte:"Gouverneur en Asie, Pline le Jeune écrit à l’empereur Trajan pour savoir comment juger les chrétiens : ils refusent d’honorer l’empereur comme un dieu, mais se réunissent paisiblement avant l’aube pour chanter leur propre dieu.", ref:"D’après Pline le Jeune, Lettres, X, 96 (vers 112), adaptation" },
       source2:{ texte:"Pour d’autres Romains, le christianisme était une superstition funeste. Tacite rapporte que Néron fit accuser les chrétiens de l’incendie de Rome : une secte à réprimer, jugeaient-ils.", ref:"D’après Tacite, Annales, XV, 44, adaptation" },
       contexte:"Légat, les chrétiens se multiplient. Ils refusent d'honorer l'empereur et nos dieux, un défi ouvert à l'ordre de Rome.",
       revenuApres:true,
       options:[
-        { label:"Exiger qu'ils sacrifient à l'empereur", effets:{ faveur:6, stabilite:-6 },
+        { label:"Exiger qu'ils honorent l'empereur comme un dieu", effets:{ faveur:6, stabilite:-6 },
           consequence:"Beaucoup refusent, au péril de leur vie. La tension monte dans les cités.",
           pourquoi:"Les chrétiens refusaient le culte impérial, perçu comme une menace pour l'unité religieuse de l'Empire." },
         { label:"Les surveiller sans sévir", effets:{ stabilite:2, faveur:-2 },
