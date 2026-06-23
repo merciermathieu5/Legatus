@@ -11,6 +11,7 @@
 window.LEGATUS = {
   titre:"Legatus", sousTitre:"Gouverner une province romaine",
   etatInitial:{ romanisation:10, stabilite:58, faveur:60, tresor:100, adhesion:50, pression:0 },
+  delaiLecture:6,
 
   jauges:[
     { id:"romanisation", nom:"Romanisation", icone:"temple", type:"pct", couleur:"pourpre" },
