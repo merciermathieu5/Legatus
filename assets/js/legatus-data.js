@@ -10,7 +10,7 @@
    ========================================================================= */
 window.LEGATUS = {
   titre:"Legatus", sousTitre:"Gouverner une province romaine",
-  etatInitial:{ romanisation:10, stabilite:58, faveur:60, tresor:100 },
+  etatInitial:{ romanisation:10, stabilite:58, faveur:60, tresor:100, adhesion:50, pression:0 },
 
   jauges:[
     { id:"romanisation", nom:"Romanisation", icone:"temple", type:"pct", couleur:"pourpre" },
@@ -61,13 +61,13 @@ window.LEGATUS = {
       contexte:"Les cités gauloises nous écrivent dans dix langues, légat. Par quoi commencer ?",
       revenuApres:true,
       options:[
-        { label:"Imposer le latin partout, sans délai", effets:{ romanisation:12, stabilite:-12, faveur:6 },
+        { label:"Imposer le latin partout, sans délai", effets:{ romanisation:12, stabilite:-12, faveur:6, adhesion:-10 },
           consequence:"Tout passe au latin. Les notables romanisés applaudissent ; le peuple se braque.",
           pourquoi:"Le latin est le premier vecteur de la romanisation. Imposé trop vite, il heurte les identités locales." },
-        { label:"Latin pour l'administration, tolérer les langues locales", effets:{ romanisation:6, stabilite:1, faveur:2 },
+        { label:"Latin pour l'administration, tolérer les langues locales", effets:{ romanisation:6, stabilite:1, faveur:2, adhesion:4 },
           consequence:"Le latin devient la langue du pouvoir ; les parlers gaulois demeurent au village.",
           pourquoi:"La voie habituelle de Rome : une romanisation progressive, qui dure parce qu'elle ne s'impose pas par la seule force." },
-        { label:"Respecter les langues gauloises, ne rien brusquer", effets:{ romanisation:1, stabilite:6, faveur:-11 },
+        { label:"Respecter les langues gauloises, ne rien brusquer", effets:{ romanisation:1, stabilite:6, faveur:-11, adhesion:8 },
           consequence:"Tu gouvernes dans les langues du pays. La paix règne, mais la province reste gauloise.",
           pourquoi:"La paix est préservée, mais Rome attend de son légat des résultats." }
       ]
@@ -81,13 +81,13 @@ window.LEGATUS = {
       contexte:"Faut-il imposer le droit de Rome dans les tribunaux, légat ?",
       revenuApres:true,
       options:[
-        { label:"Imposer le droit romain partout", effets:{ romanisation:12, stabilite:-10, faveur:4 },
+        { label:"Imposer le droit romain partout", effets:{ romanisation:12, stabilite:-10, faveur:4, adhesion:-9 },
           consequence:"Le droit romain règle tout litige. Un puissant ciment, mais les coutumes bafouées font grincer des dents.",
           pourquoi:"Le droit est l'un des grands vecteurs de romanisation ; imposé d'un coup, il déracine et provoque des résistances." },
-        { label:"Droit romain, mais coutumes locales reconnues", effets:{ romanisation:7, stabilite:1 },
+        { label:"Droit romain, mais coutumes locales reconnues", effets:{ romanisation:7, stabilite:1, adhesion:6 },
           consequence:"Les tribunaux appliquent le droit romain en respectant certains usages gaulois.",
           pourquoi:"Reconnaître les coutumes tout en avançant le droit romain : une intégration juridique durable." },
-        { label:"Laisser les coutumes gauloises", effets:{ romanisation:1, stabilite:5, faveur:-10 },
+        { label:"Laisser les coutumes gauloises", effets:{ romanisation:1, stabilite:5, faveur:-10, adhesion:7 },
           consequence:"La justice reste coutumière. Personne n'est froissé, mais Rome n'a guère avancé.",
           pourquoi:"La paix est préservée, mais le droit (donc la romanisation) n'a pas progressé." }
       ]
@@ -222,13 +222,13 @@ window.LEGATUS = {
       contexte:"Rome veut qu'on honore l'empereur comme un dieu, légat. L'imposer aux Gaulois ?",
       revenuApres:true,
       options:[
-        { label:"Imposer le culte de Rome et de l'empereur", effets:{ romanisation:10, stabilite:-12, faveur:8 },
+        { label:"Imposer le culte de Rome et de l'empereur", effets:{ romanisation:10, stabilite:-12, faveur:8, adhesion:-10 },
           consequence:"Des autels à l'empereur s'élèvent partout. Rome est ravie ; les fidèles des dieux gaulois, beaucoup moins.",
           pourquoi:"Le culte impérial soudait l'Empire autour de l'empereur, mais imposé de force il heurtait les croyances locales." },
-        { label:"Encourager le mélange des dieux romains et gaulois", effets:{ romanisation:7, stabilite:2 },
+        { label:"Encourager le mélange des dieux romains et gaulois", effets:{ romanisation:7, stabilite:2, adhesion:9 },
           consequence:"On associe Mercure à un dieu gaulois, on partage les temples. Les Gaulois adoptent Rome sans renier les leurs.",
           pourquoi:"Rome fondait souvent ses dieux avec ceux des peuples conquis (l'interpretatio romana) : une romanisation respectueuse." },
-        { label:"Laisser librement les cultes locaux", effets:{ stabilite:6, faveur:-11 },
+        { label:"Laisser librement les cultes locaux", effets:{ stabilite:6, faveur:-11, adhesion:6 },
           consequence:"Chacun prie ses dieux. La paix religieuse règne, mais Rome n'avance pas.",
           pourquoi:"La liberté religieuse préserve la paix, mais ne fait pas progresser la romanisation." }
       ]
@@ -242,10 +242,10 @@ window.LEGATUS = {
       contexte:"Et si nous formions à la romaine les fils de l'aristocratie gauloise, légat ?",
       revenuApres:true,
       options:[
-        { label:"Ouvrir une école latine pour les élites", effets:{ romanisation:12, stabilite:-2, faveur:3 }, cout:25,
+        { label:"Ouvrir une école latine pour les élites", effets:{ romanisation:12, stabilite:-2, faveur:3, adhesion:5 }, cout:25,
           consequence:"Les fils des chefs apprennent le latin, la rhétorique, l'histoire de Rome. Demain, ils gouverneront en Romains.",
           pourquoi:"Éduquer les élites à la romaine, c'est romaniser la génération dirigeante : un investissement profond et durable." },
-        { label:"Des précepteurs ouverts à tous les notables", effets:{ romanisation:8, stabilite:2 }, cout:18,
+        { label:"Des précepteurs ouverts à tous les notables", effets:{ romanisation:8, stabilite:2, adhesion:8 }, cout:18,
           consequence:"Plus de familles accèdent à la culture latine. Diffusion plus large, plus lente, plus paisible.",
           pourquoi:"Élargir l'accès à la culture latine romanise en profondeur et sans heurt, mais demande du temps." },
         { label:"Ne rien financer pour l'instant", effets:{ faveur:-3, romanisation:-1 },
@@ -262,13 +262,13 @@ window.LEGATUS = {
       contexte:"Legatus, je songe à faire de tous les hommes libres de l'Empire des citoyens romains. M'appuieras-tu ?",
       revenuApres:true,
       options:[
-        { label:"Soutenir la citoyenneté pour tous les hommes libres", effets:{ romanisation:14, stabilite:6, faveur:-3, tresor:10 }, persistant:{ tresor:2 },
+        { label:"Soutenir la citoyenneté pour tous les hommes libres", effets:{ romanisation:14, stabilite:6, faveur:-3, tresor:10, adhesion:14 }, persistant:{ tresor:2 },
           consequence:"Des millions de provinciaux deviennent citoyens romains. La Gaule se sent pleinement de l'Empire, et paie l'impôt des citoyens.",
           pourquoi:"L'édit de Caracalla (212) fit de presque tous les habitants libres des citoyens romains : l'aboutissement de l'intégration (et une nouvelle assiette fiscale)." },
-        { label:"L'élargir aux seules élites méritantes", effets:{ romanisation:7, stabilite:2, faveur:2 }, persistant:{ tresor:1 },
+        { label:"L'élargir aux seules élites méritantes", effets:{ romanisation:7, stabilite:2, faveur:2, adhesion:7 }, persistant:{ tresor:1 },
           consequence:"Les notables fidèles deviennent citoyens. L'intégration avance, prudente.",
           pourquoi:"Récompenser les élites par la citoyenneté liait leur sort à celui de Rome." },
-        { label:"S'opposer : garder la citoyenneté rare", effets:{ faveur:-8, stabilite:-4, romanisation:-2 },
+        { label:"S'opposer : garder la citoyenneté rare", effets:{ faveur:-8, stabilite:-4, romanisation:-2, adhesion:-8 },
           consequence:"La citoyenneté reste un privilège jalousement gardé. Beaucoup de provinciaux s'en sentent exclus.",
           pourquoi:"Restreindre la citoyenneté entretenait le prestige romain, mais freinait l'intégration des peuples." }
       ]
@@ -278,6 +278,7 @@ window.LEGATUS = {
       type:"evenement", id:"revolte", acte:"Acte IV : Tenir l'Empire",
       acteIntro:"Les décennies filent. L'Empire est à son apogée, mais sa grandeur même devient un fardeau. Des fissures apparaissent, au-dedans comme aux frontières.",
       controleRome:{ seuil:40, rappel:27, malus:9, faveurRappel:18 },
+      pressionActe:30,
       acteMalus:{ stabilite:-11 }, acteMalusNote:"La pression des crises ébranle la province (stabilité −11).",
       perso:"gaulois", expr:"severe", ambiance:"danger", nom:"Diviciacos, chef éduen",
       titre:"La révolte des Éduens",
@@ -287,14 +288,14 @@ window.LEGATUS = {
       contexteGrave:"Romain ! Tes lois, tes dieux, tes impôts : tu veux nous effacer. La révolte gagne toute la Gaule !",
       seuilGrave:42, revenuApres:true,
       options:[
-        { label:"Réprimer par les légions", flag:"repression", effets:{ stabilite:15, romanisation:-8, faveur:6 }, persistant:{ tresor:-3 },
+        { label:"Réprimer par les légions", flag:"repression", effets:{ stabilite:15, romanisation:-8, faveur:6, adhesion:-12 }, pression:8, persistant:{ tresor:-3 },
           consequence:"Les légions écrasent la révolte. L'ordre revient, mais la province se tait par crainte, non par adhésion.",
           pourquoi:"La force rétablit l'ordre, mais la soumission n'est pas l'adhésion : la rancœur couve et la romanisation recule." },
-        { label:"Négocier et accorder la citoyenneté aux élites éduennes", effets:{ stabilite:10, romanisation:10, faveur:-5, tresor:-20 },
-          effetsSi:{ flag:"curie", effets:{ stabilite:12, romanisation:14, faveur:-2, tresor:-20 }, note:"Grâce à ta curie, l'intégration des notables se fait sans heurt." },
+        { label:"Négocier et accorder la citoyenneté aux élites éduennes", effets:{ stabilite:10, romanisation:10, faveur:-5, tresor:-20, adhesion:14 }, pression:-6,
+          effetsSi:{ flag:"curie", effets:{ stabilite:12, romanisation:14, faveur:-2, tresor:-20, adhesion:16 }, note:"Grâce à ta curie, l'intégration des notables se fait sans heurt." },
           consequence:"Les chefs éduens, devenus citoyens, déposent les armes : ils ont désormais tout à gagner de Rome.",
           pourquoi:"Rome bâtit son empire en intégrant les élites locales : la citoyenneté en fit des alliés. Les conservateurs s'en méfiaient." },
-        { label:"Baisser les impôts pour apaiser", effets:{ stabilite:8, romanisation:2, faveur:-7, tresor:-30 },
+        { label:"Baisser les impôts pour apaiser", effets:{ stabilite:8, romanisation:2, faveur:-7, tresor:-30, adhesion:6 }, pression:-3,
           consequence:"Le soulagement fiscal calme la colère, mais tes caisses en souffrent.",
           pourquoi:"Apaiser par l'argent évite l'affrontement, mais vide le trésor et ne romanise guère." }
       ]
@@ -308,16 +309,16 @@ window.LEGATUS = {
       contexte:"Légat ! Des bandes germaniques ont franchi le Rhin et pillent nos confins. Tes ordres ?",
       revenuApres:true,
       options:[
-        { label:"Lever des auxiliaires gaulois pour défendre la frontière", effets:{ romanisation:8, stabilite:4, faveur:4, tresor:-25 }, persistant:{ tresor:-5 },
+        { label:"Lever des auxiliaires gaulois pour défendre la frontière", effets:{ romanisation:8, stabilite:4, faveur:4, tresor:-25, adhesion:6 }, pression:-5, persistant:{ tresor:-5 },
           consequence:"Des Gaulois prennent les armes sous l'aigle romaine. En servant Rome, ils s'y attachent.",
           pourquoi:"Enrôler les Gaulois dans l'armée les intégrait à Rome : le service militaire, récompensé par la citoyenneté, romanisait." },
-        { label:"Faire venir des légions d'Italie", effets:{ stabilite:10, faveur:-4, tresor:-45 }, persistant:{ tresor:-8 },
+        { label:"Faire venir des légions d'Italie", effets:{ stabilite:10, faveur:-4, tresor:-45, adhesion:-2 }, pression:-8, persistant:{ tresor:-8 },
           consequence:"Les légions repoussent l'envahisseur, au prix fort, et sans rien changer aux cœurs gaulois.",
           pourquoi:"Les légions sécurisaient vite, mais coûtaient cher et n'intégraient pas la population." },
-        { label:"Négocier et verser un tribut aux chefs germains", effets:{ tresor:-35, stabilite:4, faveur:-10 }, persistant:{ tresor:-5 },
+        { label:"Négocier et verser un tribut aux chefs germains", effets:{ tresor:-35, stabilite:4, faveur:-10, adhesion:2 }, pression:-3, persistant:{ tresor:-5 },
           consequence:"L'or achète la paix sur le Rhin. La frontière se calme, mais Rome juge le procédé indigne.",
           pourquoi:"Acheter la paix évitait la guerre, mais affaiblissait le prestige de Rome." },
-        { label:"Laisser les cités se défendre seules", effets:{ stabilite:-10, romanisation:-4, faveur:-6 },
+        { label:"Laisser les cités se défendre seules", effets:{ stabilite:-10, romanisation:-4, faveur:-6, adhesion:-4 }, pression:20, finImposee:"perte",
           consequence:"Sans renforts ni tribut, chaque cité se débrouille. Les campagnes sont pillées, des terres se vident et la frontière recule.",
           pourquoi:"Faute d'armée ou de tribut, Rome perdait le contrôle de ses confins : les campagnes se dépeuplaient et la frontière s'effritait." }
       ]
@@ -331,13 +332,13 @@ window.LEGATUS = {
       contexte:"Légat, tout vacille à la fois : invasions sur tous les fronts, empereurs assassinés, monnaie sans valeur. L'Empire manque de sombrer.",
       revenuApres:true,
       options:[
-        { label:"Mobiliser toutes les forces pour sauver l'Empire", effets:{ stabilite:9, faveur:3, tresor:-50 }, persistant:{ tresor:-8 },
+        { label:"Mobiliser toutes les forces pour sauver l'Empire", effets:{ stabilite:9, faveur:3, tresor:-50 }, pression:-8, persistant:{ tresor:-8 },
           consequence:"À force d'efforts et de dépenses, tu tiens. L'Empire survit, exsangue mais debout.",
           pourquoi:"La crise du IIIᵉ siècle (invasions, anarchie militaire) faillit emporter Rome ; la sauver exigea des sacrifices énormes." },
-        { label:"Te replier sur la défense des cités", effets:{ stabilite:3, romanisation:-4, faveur:-3, tresor:-15 }, persistant:{ tresor:-2 },
+        { label:"Te replier sur la défense des cités", effets:{ stabilite:3, romanisation:-4, faveur:-3, tresor:-15 }, pression:-3, persistant:{ tresor:-2 },
           consequence:"Tu sauves les villes en abandonnant des campagnes. On survit, mais on recule.",
           pourquoi:"Faute de moyens, Rome dut parfois sacrifier des territoires pour tenir l'essentiel." },
-        { label:"Espérer que la tempête passe d'elle-même", effets:{ stabilite:-14, faveur:-6 },
+        { label:"Espérer que la tempête passe d'elle-même", effets:{ stabilite:-14, faveur:-6 }, pression:16,
           consequence:"Sans réaction ferme, les provinces sont ravagées et la confiance s'effondre.",
           pourquoi:"Devant des menaces simultanées, l'inaction précipitait l'effondrement." }
       ]
@@ -351,22 +352,23 @@ window.LEGATUS = {
       contexte:"L'armée dévore le trésor, légat. Défendre un empire aussi vaste coûte plus que tout le reste. Comment payer ?",
       revenuApres:true,
       options:[
-        { label:"Lever de lourds impôts pour financer l'armée", effets:{ tresor:35, stabilite:-10 }, persistant:{ tresor:4 },
+        { label:"Lever de lourds impôts pour financer l'armée", effets:{ tresor:35, stabilite:-10, adhesion:-8 }, persistant:{ tresor:4 },
           consequence:"L'armée est payée, les frontières tiennent. Mais le poids fiscal écrase le peuple, qui gronde.",
           pourquoi:"Défendre l'Empire imposait des impôts écrasants, l'une des grandes sources de mécontentement et de déclin." },
-        { label:"Rogner l'argent de la monnaie", effets:{ tresor:20, stabilite:-6, faveur:-3, romanisation:-2 }, persistant:{ tresor:2 },
+        { label:"Rogner l'argent de la monnaie", effets:{ tresor:20, stabilite:-6, faveur:-3, romanisation:-2, adhesion:-4 }, persistant:{ tresor:2 },
           consequence:"Tu paies en pièces dévaluées. Les prix s'envolent, la confiance dans Rome s'effrite.",
           pourquoi:"Dévaluer la monnaie pour financer l'armée provoqua une inflation qui ruina l'économie de l'Empire." },
-        { label:"Réduire l'armée pour souffler", effets:{ tresor:10, stabilite:-3, faveur:-6 }, persistant:{ tresor:3 },
+        { label:"Réduire l'armée pour souffler", effets:{ tresor:10, stabilite:-3, faveur:-6 }, pression:10, flag:"armee_faible", persistant:{ tresor:3 },
           consequence:"Le trésor respire, mais les frontières se dégarnissent, un pari dangereux.",
           pourquoi:"Réduire l'armée soulageait les finances, mais exposait l'Empire aux invasions." },
-        { label:"Payer la solde sur le trésor (100 d.)", cout:100, effets:{ stabilite:4, faveur:3 },
+        { label:"Payer la solde sur le trésor (100 d.)", cout:100, effets:{ stabilite:4, faveur:3, adhesion:4 }, pression:-4,
           consequence:"Les légions sont payées en bonne monnaie, sans nouvel impôt ni dévaluation. Elles restent loyales, et Rome apprécie une province qui se tient.",
           pourquoi:"Payer l'armée en monnaie saine à même le trésor préservait l'économie, mais peu de gouverneurs en avaient les moyens." }
       ]
     },
     {
       type:"evenement", id:"vaste", acte:"Acte IV : Tenir l'Empire",
+      contexteSi:{ flag:"armee_faible", ajout:"\u26A0 L'armée réduite gronde : des unités mal payées se mutinent.", malus:{ stabilite:-6, faveur:-4 } },
       perso:"empereur", expr:"neutre", ambiance:"solennel", nom:"L'empereur Dioclétien",
       titre:"Un empire trop vaste",
       source:{ texte:"Lactance rapporte que Dioclétien, jugeant l’Empire trop vaste pour un seul homme, en partagea le gouvernement entre plusieurs chefs (la Tétrarchie), au prix, déplore-t-il, d’une administration et d’impôts alourdis.", ref:"D’après Lactance, De la mort des persécuteurs (vers 315), adaptation" },
@@ -374,13 +376,13 @@ window.LEGATUS = {
       contexte:"Legatus, l'Empire est devenu trop grand pour un seul maître. Faut-il en partager le gouvernement pour mieux le défendre ?",
       revenuApres:true,
       options:[
-        { label:"Partager le pouvoir entre plusieurs chefs (la tétrarchie)", effets:{ stabilite:10, faveur:4, romanisation:-2, tresor:-15 }, persistant:{ tresor:-6 },
+        { label:"Partager le pouvoir entre plusieurs chefs (la tétrarchie)", effets:{ stabilite:10, faveur:4, romanisation:-2, tresor:-15 }, pression:-10, persistant:{ tresor:-6 },
           consequence:"Plusieurs empereurs se partagent l'Empire : chacun défend sa part. Mieux gardé, mais l'unité se fissure.",
           pourquoi:"Face à l'immensité et aux invasions, Dioclétien partagea le pouvoir (la tétrarchie) pour mieux défendre l'Empire, au risque de la division." },
-        { label:"Hérisser la frontière de forts et de garnisons (le limes)", cout:45, effets:{ stabilite:8, romanisation:1 }, persistant:{ tresor:-8 },
+        { label:"Hérisser la frontière de forts et de garnisons (le limes)", cout:45, effets:{ stabilite:8, romanisation:1 }, pression:-12, persistant:{ tresor:-8 },
           consequence:"Tu fortifies le limes. Les incursions ralentissent, à grands frais.",
           pourquoi:"Fortifier la frontière (le limes) ralentissait les invasions, mais coûtait cher et figeait l'armée sur la défensive." },
-        { label:"Tout gouverner seul depuis le centre", effets:{ stabilite:-8, faveur:2 }, persistant:{ tresor:-2 },
+        { label:"Tout gouverner seul depuis le centre", effets:{ stabilite:-8, faveur:2 }, pression:6, persistant:{ tresor:-2 },
           consequence:"Tu refuses de partager le pouvoir. Mais un seul homme ne peut surveiller des frontières si lointaines.",
           pourquoi:"Gouverner seul un empire aussi vaste devint presque impossible : les distances et les menaces multiples le débordaient." }
       ]
@@ -390,6 +392,7 @@ window.LEGATUS = {
       type:"evenement", id:"religion", acte:"Acte V : Le tournant chrétien",
       acteIntro:"Près de deux siècles ont passé. L'Empire que tu sers a changé de visage : une foi venue d'Orient gagne les villes et bouleverse l'ordre romain. Rien ne sera plus comme avant.",
       controleRome:{ seuil:52, rappel:41, malus:9, faveurRappel:23 },
+      pressionActe:80,
       acteMalus:{ stabilite:-10, faveur:-5 }, acteMalusNote:"Le grand bouleversement religieux secoue l'Empire (stabilité −10, faveur −5).",
       perso:"conseiller", expr:"inquiet", ambiance:"jour", nom:"Marcus, ton conseiller",
       titre:"Une religion nouvelle",
@@ -398,13 +401,13 @@ window.LEGATUS = {
       contexte:"Légat, les chrétiens se multiplient. Ils refusent d'honorer l'empereur et nos dieux, un défi ouvert à l'ordre de Rome.",
       revenuApres:true,
       options:[
-        { label:"Exiger qu'ils honorent l'empereur comme un dieu", effets:{ faveur:6, stabilite:-6 },
+        { label:"Exiger qu'ils honorent l'empereur comme un dieu", effets:{ faveur:6, stabilite:-6, adhesion:-8 },
           consequence:"Beaucoup refusent, au péril de leur vie. La tension monte dans les cités.",
           pourquoi:"Les chrétiens refusaient le culte impérial, perçu comme une menace pour l'unité religieuse de l'Empire." },
-        { label:"Les surveiller sans sévir", effets:{ stabilite:2, faveur:-2 },
+        { label:"Les surveiller sans sévir", effets:{ stabilite:2, faveur:-2, adhesion:-2 },
           consequence:"Tu temporises. Les chrétiens prient discrètement, sans heurt majeur.",
           pourquoi:"Beaucoup de gouverneurs tolérèrent d'abord les chrétiens par pragmatisme." },
-        { label:"Les laisser pratiquer librement", effets:{ stabilite:5, faveur:-11 },
+        { label:"Les laisser pratiquer librement", effets:{ stabilite:5, faveur:-11, adhesion:8 },
           consequence:"La paix règne dans les cités, mais Rome juge ta mollesse avec sévérité.",
           pourquoi:"Tolérer une foi qui rejetait le culte impérial heurtait frontalement les autorités." }
       ]
@@ -418,13 +421,13 @@ window.LEGATUS = {
       contexte:"L'empereur ordonne de réprimer les chrétiens dans tout l'Empire, legatus. Appliques-tu l'édit de persécution ?",
       revenuApres:true,
       options:[
-        { label:"Persécuter durement les chrétiens", flag:"persecution", effets:{ faveur:8, stabilite:-12 },
+        { label:"Persécuter durement les chrétiens", flag:"persecution", effets:{ faveur:8, stabilite:-12, adhesion:-14 }, pression:6,
           consequence:"Arrestations, procès, martyrs. Pourtant, plus tu frappes, plus la foi gagne en ferveur et en sympathie.",
           pourquoi:"Les grandes persécutions (Dèce, Dioclétien) firent des martyrs sans enrayer l'essor du christianisme, souvent l'inverse." },
-        { label:"Appliquer mollement, fermer les yeux", effets:{ faveur:-3, stabilite:4 },
+        { label:"Appliquer mollement, fermer les yeux", effets:{ faveur:-3, stabilite:4, adhesion:-2 },
           consequence:"Tu sauves les apparences sans déchaîner la violence. Les cités restent calmes.",
           pourquoi:"Appliquer mollement les édits limitait les troubles, au risque de déplaire à l'empereur." },
-        { label:"Refuser de persécuter", effets:{ faveur:-13, stabilite:7 },
+        { label:"Refuser de persécuter", effets:{ faveur:-13, stabilite:7, adhesion:10 },
           consequence:"Tu épargnes les chrétiens. La paix locale est préservée, mais tu défies ouvertement Rome.",
           pourquoi:"Refuser la persécution préservait la paix, mais c'était défier l'autorité impériale." }
       ]
@@ -438,13 +441,13 @@ window.LEGATUS = {
       contexte:"Moi, Constantin, j'ai vaincu sous un signe nouveau. Je proclame la liberté de culte pour tous, chrétiens compris. Appliqueras-tu mon édit, legatus ?",
       revenuApres:true,
       options:[
-        { label:"Appliquer pleinement l'Édit de Milan", flag:"milan", effets:{ stabilite:10, faveur:8, romanisation:4 },
+        { label:"Appliquer pleinement l'Édit de Milan", flag:"milan", effets:{ stabilite:10, faveur:8, romanisation:4, adhesion:12 }, pression:-4,
           consequence:"Les persécutions cessent, les chrétiens sortent de l'ombre, leurs biens sont rendus. L'empereur lui-même les protège.",
           pourquoi:"L'édit de Milan (313) accorda la liberté de culte et mit fin aux persécutions : avec Constantin, l'Empire bascule du côté du christianisme." },
-        { label:"Tolérer, mais sans favoriser personne", flag:"milan", effets:{ stabilite:5, faveur:2 },
+        { label:"Tolérer, mais sans favoriser personne", flag:"milan", effets:{ stabilite:5, faveur:2, adhesion:6 },
           consequence:"Tu garantis la liberté de culte sans privilégier les chrétiens. Une neutralité prudente.",
           pourquoi:"Une tolérance mesurée respectait l'édit sans heurter les fidèles des anciens dieux." },
-        { label:"Traîner les pieds, résister au changement", effets:{ stabilite:-8, faveur:-10 },
+        { label:"Traîner les pieds, résister au changement", effets:{ stabilite:-8, faveur:-10, adhesion:-6 },
           consequence:"Tu freines l'application de l'édit. Mais s'opposer à Constantin est une faute lourde.",
           pourquoi:"Résister à la nouvelle politique impériale, c'était défier l'empereur, et l'histoire en marche." }
       ]
@@ -459,13 +462,13 @@ window.LEGATUS = {
       contexteSi:{ flag:"repression", ajout:" Des inscriptions hostiles à Rome maculent encore les murs depuis ta vieille répression.", malus:{ stabilite:-6 } },
       revenuApres:true,
       options:[
-        { label:"Faire du christianisme la religion officielle de l'État", effets:{ stabilite:6, faveur:10, romanisation:4 },
+        { label:"Faire du christianisme la religion officielle de l'État", effets:{ stabilite:6, faveur:10, romanisation:4, adhesion:-6 }, pression:4,
           consequence:"Les temples païens ferment, le christianisme règne sans partage. L'Empire romain est devenu chrétien.",
           pourquoi:"Théodose fit du christianisme la religion officielle (380, édit de Thessalonique), interdisant les autres cultes : l'Empire romain devint chrétien." },
-        { label:"Favoriser l'Église sans interdire les autres cultes", effets:{ stabilite:8, faveur:5 },
+        { label:"Favoriser l'Église sans interdire les autres cultes", effets:{ stabilite:8, faveur:5, adhesion:4 },
           consequence:"Le christianisme domine, mais on laisse vivre les anciens cultes. La transition se fait sans déchirure.",
           pourquoi:"Une transition graduelle ménageait les fidèles des cultes traditionnels et préservait la paix." },
-        { label:"Maintenir l'équilibre entre tous les cultes", effets:{ stabilite:2, faveur:-10, romanisation:-2 },
+        { label:"Maintenir l'équilibre entre tous les cultes", effets:{ stabilite:2, faveur:-10, romanisation:-2, adhesion:8 },
           consequence:"Tu défends la coexistence des religions, à contre-courant de l'époque. Rome te trouve dépassé.",
           pourquoi:"À la fin du IVᵉ siècle, le christianisme l'emportait : le freiner allait à contre-courant de l'histoire." }
       ]
@@ -513,25 +516,33 @@ window.LEGATUS = {
   },
 
   echecs:{
-    stabilite:{ perso:"gaulois", expr:"severe", ambiance:"danger", titre:"L'Empire s'embrase",
+    stabilite:{ perso:"gaulois", expr:"severe", ambiance:"danger", titre:"L'Empire s'embrase", rang:{ niveau:"sombre", nom:"L'Empire embrasé" },
       texte:"La stabilité s'est effondrée : révoltes et invasions emportent la province. Rome te rappelle en disgrâce. Tenir un empire, c'est d'abord ne pas le laisser se déchirer." },
-    romanisation:{ perso:"empereur", expr:"severe", ambiance:"solennel", titre:"Rappelé : la mission de Rome trahie",
+    romanisation:{ perso:"empereur", expr:"severe", ambiance:"solennel", titre:"Rappelé : la mission de Rome trahie", rang:{ niveau:"sombre", nom:"Mission trahie" },
       texte:"La province est restée trop peu romanisée. En faisant passer ses intérêts avant ceux de Rome, tu as failli à ta mission : romaniser n'était pas une option, c'était ta charge. L'empereur te rappelle et te remplace." },
-    faveur:{ perso:"empereur", expr:"severe", ambiance:"solennel", titre:"Destitué par l'empereur",
-      texte:"L'empereur a perdu toute confiance en toi : tu es relevé de tes fonctions. Servir Rome, c'est aussi savoir épouser ses volontés, fussent-elles changeantes." }
+    faveur:{ perso:"empereur", expr:"severe", ambiance:"solennel", titre:"Destitué par l'empereur", rang:{ niveau:"sombre", nom:"Destitué" },
+      texte:"L'empereur a perdu toute confiance en toi : tu es relevé de tes fonctions. Servir Rome, c'est aussi savoir épouser ses volontés, fussent-elles changeantes." },
+    tresor:{ perso:"conseiller", expr:"severe", ambiance:"danger", titre:"Province ruinée", rang:{ niveau:"sombre", nom:"Province ruinée" },
+      texte:"Le trésor est vide. Sans argent, la province ne peut plus payer ses légions, entretenir ses routes ni nourrir ses cités : privée de moyens, elle sombre dans le désordre et échappe à Rome. Une province romaine tenait par ses finances autant que par ses armes." },
+    perte:{ perso:"gaulois", expr:"severe", ambiance:"danger", titre:"La province échappe à Rome", rang:{ niveau:"sombre", nom:"Province perdue" },
+      texte:"En cédant — abandon de la frontière, capitulation devant la révolte —, tu as laissé la province se détacher de l'Empire. Des siècles de romanisation s'effacent : sans la présence et l'autorité de Rome, l'œuvre ne tient pas. La partie s'arrête là." }
   },
 
   bilans:[
     { si:{ romanisation:77, stabilite:59, faveur:50 }, perso:"empereur", expr:"content", ambiance:"solennel",
+      rang:{ niveau:"or", nom:"Le Triomphe" },
       titre:"Apogée : une œuvre pour les siècles",
       texte:"Tu as romanisé la province en profondeur, traversé les pires crises sans la laisser sombrer, et accompagné le grand basculement chrétien sans déchirer l'Empire. Peu de gouverneurs auront tenu pareil équilibre sur une si longue durée. Ton nom restera." },
     { si:{ romanisation:64, stabilite:49, faveur:42 }, perso:"empereur", expr:"content", ambiance:"solennel",
+      rang:{ niveau:"argent", nom:"Héritage durable" },
       titre:"Un héritage romain durable",
       texte:"La Gaule est devenue romaine (langue, droit, villes, citoyens) et chrétienne avec l'Empire. Quelques secousses, mais l'essentiel tient. La romanisation a réussi, par l'intégration plus que par la conquête." },
     { si:{ romanisation:38, stabilite:25 }, perso:"conseiller", expr:"neutre", ambiance:"jour",
+      rang:{ niveau:"bronze", nom:"Romanisation inachevée" },
       titre:"Une romanisation inachevée",
       texte:"Rome a laissé son empreinte, mais l'enracinement reste fragile, ou bien tu as poussé si fort qu'à force de crises l'édifice a vacillé. L'équilibre, sur la durée, t'a manqué." },
     { si:{}, perso:"gaulois", expr:"neutre", ambiance:"jour",
+      rang:{ niveau:"sombre", nom:"L'empreinte s'efface" },
       titre:"L'empreinte de Rome s'efface",
       texte:"Faute d'avoir su l'enraciner et la tenir, l'œuvre de Rome n'a pas pris. La conquête militaire ne suffisait pas : sans langue, droit, villes et adhésion partagés, il n'y a pas de romanisation durable." }
   ]

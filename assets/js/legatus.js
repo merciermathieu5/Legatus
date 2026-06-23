@@ -15,7 +15,7 @@
     piece:'<circle cx="12" cy="12" r="9" fill="#3A2E26"/><circle cx="12" cy="12" r="6.4" fill="none" stroke="#F2E7CF" stroke-width="1.1"/><path d="M13.5 8.5 C10 8 9.5 11 12 11.6 C14.5 12.2 14 15.4 10.6 15" fill="none" stroke="#F2E7CF" stroke-width="1.3" stroke-linecap="round"/>'
   };
 
-  var etat, flags, persistants, idx, enRevolte, DIFF;
+  var etat, flags, persistants, idx, enRevolte, criseTresor, faillite, finForcee, axesPrec, finie, DIFF;
   var GEN_VERROU=0;   // jeton de génération : invalide un compte à rebours quand la scène change
   var journal=[];     // journal du mandat : une entrée par décision (pour le bilan de fin)
   var aConnuRevolte=false;  // au moins une révolte a éclaté durant le mandat ?
@@ -28,7 +28,7 @@
     return (G.difficultes && G.difficultes[G.difficultes.defaut||"legat"]) ||
            { nom:"Légat", seuilRevolte:30, seuilPaix:42, attenuation:0.5, bleed:2, revenuMod:1, malusActeMod:1 };
   }
-  function init(){ etat=Object.assign({},G.etatInitial); flags={}; persistants=[]; idx=0; enRevolte=false; journal=[]; aConnuRevolte=false; if(!DIFF)DIFF=diffDefaut(); }
+  function init(){ etat=Object.assign({},G.etatInitial); flags={}; persistants=[]; idx=0; enRevolte=false; criseTresor=false; faillite=false; finForcee=null; axesPrec=null; finie=false; journal=[]; aConnuRevolte=false; if(!DIFF)DIFF=diffDefaut(); }
 
   function el(s){ return document.querySelector(s); }
   function creer(t,c,h){ var n=document.createElement(t); if(c)n.className=c; if(h!=null)n.innerHTML=h; return n; }
@@ -59,7 +59,12 @@
   /* ---------- jauges ---------- */
   function rendreJauges(deltas){
     var b=el("#jauges"); b.innerHTML="";
+    var avecMenace=(!finie && etat.pression>0);
+    b.classList.toggle("avec-menace", avecMenace);
     if(enRevolte) b.appendChild(creer("div","revolte-banner","\u2694 Province en révolte, progrès entravés, impôts suspendus"));
+    if(criseTresor) b.appendChild(creer("div","revolte-banner","\u26A0 Trésor vide : la province ne peut plus payer ses légions ni ses chantiers"));
+    if(avecMenace) b.appendChild(banniereMenace(etat.pression));
+    var cible = avecMenace ? creer("div","jauges-grille") : b;
     G.jauges.forEach(function(j){
       var v=etat[j.id];
       var carte=creer("div","jauge");
@@ -71,7 +76,7 @@
       if(deltas&&deltas[j.id]){ var d=deltas[j.id]; val.appendChild(creer("span","delta "+(d>0?"plus":"moins"),(d>0?"+":"")+d)); }
       haut.appendChild(val); corps.appendChild(haut);
       var rail=creer("div","rail"); var fill=creer("div","fill");
-      fill.style.width=(j.type==="res"?clamp(v/200*100,0,100):v)+"%";
+      fill.style.width=(j.type==="res"?clamp(v/300*100,0,100):v)+"%";
       fill.classList.add(j.couleur==="seuil"?classeSeuil(v):j.couleur);
       rail.appendChild(fill); corps.appendChild(rail);
       if(j.id==="tresor"){
@@ -79,15 +84,16 @@
         var txt=(r>=0?"+"+r:""+r)+" d. / tour"+(enRevolte?" (révolte)":"");
         corps.appendChild(creer("div","jauge-revenu"+(r<=0?" nul":""), txt));
       }
-      carte.appendChild(corps); b.appendChild(carte);
+      carte.appendChild(corps); cible.appendChild(carte);
     });
+    if(avecMenace) b.appendChild(cible);
   }
 
   /* ---------- effets ---------- */
   function appliquer(eff){ var d={}; Object.keys(eff||{}).forEach(function(k){ var a=etat[k];
     etat[k]=(k==="tresor")?Math.max(0,etat[k]+eff[k]):clamp(etat[k]+eff[k],0,100); d[k]=etat[k]-a; }); return d; }
   function fusion(a,b){ var r=Object.assign({},a); Object.keys(b||{}).forEach(function(k){ r[k]=(r[k]||0)+b[k]; }); return r; }
-  function gameOver(){ if(etat.stabilite<=0)return "stabilite"; if(etat.faveur<=0)return "faveur"; return null; }
+  function gameOver(){ if(faillite)return "tresor"; if(etat.stabilite<=0)return "stabilite"; if(etat.faveur<=0)return "faveur"; if(etat.romanisation<=0)return "romanisation"; return null; }
   function estPositif(d){ var s=0; Object.keys(d).forEach(function(k){ if(k!=="tresor")s+=d[k]; }); return s>=0; }
 
   /* ---------- révolte (niveau de difficulté) ---------- */
@@ -114,6 +120,86 @@
       return "\u2694 La révolte couve toujours… Rétablis l'ordre (stabilité \u2265 "+DIFF.seuilPaix+") pour y mettre fin.";
     }
     return "";
+  }
+
+  // Trésor vide = la province ne peut plus se financer : choc immédiat, puis faillite si rien ne rentre.
+  function majTresor(deltas){
+    if(etat.tresor<=0){
+      if(!criseTresor){
+        criseTresor=true;
+        ajoute(deltas, appliquer({stabilite:-12, faveur:-8}));
+        return "\u26A0 Le trésor est vide : la province ne peut plus payer ses légions ni ses chantiers. Renfloue-le, sinon Rome perdra la province.";
+      }
+      faillite=true;
+      return "\u2716 Ruinée, la province ne peut plus se défendre ni s'administrer : elle échappe à Rome.";
+    }
+    if(criseTresor){ criseTresor=false; return "\u2714 Le trésor se renfloue : la province écarte la faillite."; }
+    return "";
+  }
+
+  /* ---------- pression sur l'Empire (climax des actes IV-V) ---------- */
+  function banniereMenace(p){
+    p=clamp(p,0,100);
+    var niv = p>=78 ? "haut" : (p>=45 ? "moyen" : "bas");
+    var note = niv==="haut" ? "Invasions et crise : l'Empire vacille"
+             : niv==="moyen" ? "Les fissures s'élargissent aux frontières"
+             : "Des tensions montent aux frontières";
+    var box=creer("div","menace-sparte niv-"+niv);
+    var tete=creer("div","menace-tete");
+    tete.appendChild(creer("span","menace-ic",'<svg viewBox="0 0 24 24" aria-hidden="true"><line x1="5" y1="6" x2="16" y2="17" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"/><line x1="19" y1="6" x2="8" y2="17" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"/><circle cx="5" cy="6" r="1.7" fill="currentColor"/><circle cx="19" cy="6" r="1.7" fill="currentColor"/></svg>'));
+    tete.appendChild(creer("span","menace-titre","Pression sur l'Empire"));
+    tete.appendChild(creer("span","menace-pct",Math.round(p)+" %"));
+    box.appendChild(tete);
+    var rail=creer("div","menace-rail"); var fill=creer("div","menace-fill"); fill.style.width=p+"%";
+    rail.appendChild(fill); box.appendChild(rail);
+    box.appendChild(creer("div","menace-note",esc(note)));
+    return box;
+  }
+
+  /* ---------- indicateurs de trajectoire (sous les décisions) ---------- */
+  // Deux axes de lecture : enracinement (résistance ↔ romanisation) et méthode (force ↔ adhésion).
+  function unAxe(gauche, droite, valStart, cls){
+    var a=creer("div","axe");
+    var poles=creer("div","axe-poles");
+    poles.appendChild(creer("span","axe-pole-g",esc(gauche)));
+    poles.appendChild(creer("span","axe-pole-d",esc(droite)));
+    a.appendChild(poles);
+    var rail=creer("div","axe-rail "+cls);
+    var marq=creer("div","axe-marqueur");
+    marq.style.transition="none";
+    marq.style.left=clamp(valStart,0,100)+"%";
+    rail.appendChild(marq); a.appendChild(rail);
+    return { node:a, marq:marq };
+  }
+  // glissement maison image par image : insensible au réglage « réduire les animations »
+  function glisser(marq, from, to, duree){
+    from=clamp(from,0,100); to=clamp(to,0,100);
+    marq.style.left=from+"%";
+    var t0=null;
+    function step(ts){
+      if(!marq.isConnected) return;
+      if(t0===null) t0=ts;
+      var p=Math.min(1,(ts-t0)/duree);
+      marq.style.left=(from+(to-from)*p).toFixed(2)+"%";
+      if(p<1) requestAnimationFrame(step);
+    }
+    setTimeout(function(){ requestAnimationFrame(step); }, 180);
+  }
+  function rendreAxes(ms){
+    var curRom=etat.romanisation, curAdh=(etat.adhesion!=null?etat.adhesion:50);
+    var startRom=axesPrec?axesPrec.rom:curRom, startAdh=axesPrec?axesPrec.adh:curAdh;
+    var box=creer("div","axes");
+    box.appendChild(creer("div","axes-tete","Comment Rome s'enracine-t-elle ?"));
+    var d=unAxe("Résistance","Romanisation", startRom, "dem");
+    var l=unAxe("Par la force","Par l'adhésion", startAdh, "lib");
+    box.appendChild(d.node); box.appendChild(l.node);
+    var duree=(typeof ms==="number" && ms>0) ? ms : 0;
+    if(duree>0 && startRom!==curRom) glisser(d.marq, startRom, curRom, duree);
+    else d.marq.style.left=clamp(curRom,0,100)+"%";
+    if(duree>0 && startAdh!==curAdh) glisser(l.marq, startAdh, curAdh, duree);
+    else l.marq.style.left=clamp(curAdh,0,100)+"%";
+    axesPrec={ rom:curRom, adh:curAdh };
+    return box;
   }
 
   /* ---------- scène (case BD) ---------- */
@@ -292,6 +378,7 @@
       }
     }
     var go=gameOver(); if(go) return finEchec(go);
+    if(e.pressionActe) etat.pression = Math.max(etat.pression||0, e.pressionActe);
     son("evenement","acte"); son("refleter", etat, etatSonore());
     rendreJauges(deltas);
     var scene=el("#scene"); scene.innerHTML="";
@@ -346,6 +433,7 @@
     var verrou=ms>0 ? noteDeLecture(ms) : null;
     if(verrou) bas.appendChild(verrou);
     bas.appendChild(liste);
+    bas.appendChild(rendreAxes(ms));
 
     rendreJauges(malus);
     rendreScene({ perso:e.perso, expr:e.expr, ambiance:e.ambiance, nom:e.nom,
@@ -410,9 +498,9 @@
     if(b) setTimeout(function(){ try{ b.focus(); }catch(e){} }, 30);
   }
   function chipsDeltas(deltas){
-    var noms={romanisation:"Romanisation",stabilite:"Stabilité",faveur:"Faveur de Rome",tresor:"Trésor"};
+    var noms={romanisation:"Romanisation",stabilite:"Stabilité",faveur:"Faveur de Rome",tresor:"Trésor",adhesion:"Adhésion"};
     var wrap=creer("div","modal-deltas"); var any=false;
-    ["romanisation","stabilite","faveur","tresor"].forEach(function(k){
+    ["romanisation","stabilite","faveur","tresor","adhesion"].forEach(function(k){
       if(deltas[k]){ any=true;
         wrap.appendChild(creer("span","chip "+(deltas[k]>0?"d-plus":"d-moins"),(deltas[k]>0?"+":"")+deltas[k]+" "+noms[k])); }
     });
@@ -434,6 +522,8 @@
     journal.push({ acte:e.acte||"", titre:e.titre||"", label:opt.label,
                    consequence:opt.consequence+(note?" "+note:""), deltas:Object.assign({},deltas), contreDoc:dAlerte });
     if(opt.flag) flags[opt.flag]=true;
+    if(opt.finImposee) finForcee=opt.finImposee;
+    if(opt.pression) etat.pression = clamp((etat.pression||0)+opt.pression, 0, 100);
     if(opt.persistant) persistants.push(opt.persistant);
     var revenuTxt="";
     if(e.revenuApres){
@@ -449,6 +539,7 @@
       }
     }
     var revolteTxt = majRevolte(deltas);
+    var tresorTxt = majTresor(deltas);
     var positif=estPositif(deltas);
     var expr=positif?"content":"inquiet";
 
@@ -481,6 +572,7 @@
     if(revenuTxt) imp.appendChild(creer("div","corr",esc(revenuTxt)));
     carte.appendChild(imp);
     if(revolteTxt) carte.appendChild(creer("div","note-revolte",esc(revolteTxt)));
+    if(tresorTxt) carte.appendChild(creer("div","note-revolte",esc(tresorTxt)));
 
     // explication pédagogique
     var pq=creer("div","pourquoi");
@@ -489,7 +581,7 @@
 
     // action : poursuivre
     var act=creer("div","actions modal-actions");
-    var b=creer("button","btn btn-primaire",(idx<G.etapes.length-1)?"Continuer":"Fin du mandat");
+    var b=creer("button","btn btn-primaire",(finForcee||idx>=G.etapes.length-1)?"Fin du mandat":"Continuer");
     b.addEventListener("click",function(){ fermerModale(); continuer(); });
     act.appendChild(b); carte.appendChild(act);
 
@@ -498,26 +590,29 @@
   }
 
   function listeDeltas(deltas){
-    var noms={romanisation:"Romanisation",stabilite:"Stabilité",faveur:"Faveur de Rome",tresor:"Trésor"};
+    var noms={romanisation:"Romanisation",stabilite:"Stabilité",faveur:"Faveur de Rome",tresor:"Trésor",adhesion:"Adhésion"};
     var p=[];
-    ["romanisation","stabilite","faveur","tresor"].forEach(function(k){
+    ["romanisation","stabilite","faveur","tresor","adhesion"].forEach(function(k){
       if(deltas[k]) p.push('<span class="d-'+(deltas[k]>0?"plus":"moins")+'">'+(deltas[k]>0?"+":"")+deltas[k]+' '+noms[k]+'</span>'); });
     return p.length?p.join(" · "):"Aucun changement.";
   }
 
   function continuer(){
+    if(finForcee){ var ff=finForcee; finForcee=null; return finEchec(ff); }
     var go=gameOver(); if(go) return finEchec(go);
     if(idx<G.etapes.length-1) etape(idx+1); else bilan();
   }
 
   /* ---------- fins ---------- */
   function finEchec(type){
+    finie=true;
     var f=G.echecs[type]; rendreJauges();
     son("evenement","echec");
     var bas=ecranBilan(f, "Fin du mandat");
     rendreScene({ perso:f.perso, expr:f.expr, ambiance:f.ambiance, nom:f.titre, texte:f.texte, html:bas });
   }
   function bilan(){
+    finie=true;
     var c=G.bilans[G.bilans.length-1];
     for(var i=0;i<G.bilans.length;i++){ var cond=G.bilans[i].si, ok=true;
       Object.keys(cond).forEach(function(k){ if(etat[k]<cond[k]) ok=false; }); if(ok){ c=G.bilans[i]; break; } }
@@ -528,6 +623,31 @@
   }
 
   // contenu commun des écrans de fin : en-tête d'impression, verdict, trajectoire, journal, actions
+  function svgMedaille(niv){
+    var centre = (niv==="sombre")
+      ? '<rect x="31" y="38" width="10" height="8" fill="currentColor"/><rect x="27" y="46" width="18" height="4" fill="currentColor"/><path d="M31 38l3-4 3 4 3-4" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/>'
+      : '<rect x="31" y="27" width="10" height="19" fill="currentColor"/><rect x="27" y="23" width="18" height="4.5" fill="currentColor"/><rect x="27" y="46" width="18" height="4.5" fill="currentColor"/><path d="M33 27v19M37 27v19" stroke="#fff" stroke-width="1" opacity=".45"/>';
+    return '<svg viewBox="0 0 72 72" aria-hidden="true">'
+      + '<circle cx="36" cy="36" r="22" fill="currentColor" opacity=".12"/>'
+      + '<circle cx="36" cy="36" r="22" fill="none" stroke="currentColor" stroke-width="3"/>'
+      + '<path d="M14 51C8 41 9 28 18 21" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>'
+      + '<path d="M14 46l-5-1M13 41l-5-2M14 36l-5-2M16 31l-5-3M19 26l-4-3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>'
+      + '<path d="M58 51c6-10 5-23-4-30" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>'
+      + '<path d="M58 46l5-1M59 41l5-2M58 36l5-2M56 31l5-3M53 26l4-3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>'
+      + centre + '</svg>';
+  }
+  function badgeRang(rang){
+    if(!rang) return null;
+    var niv=rang.niveau||"sombre";
+    var libelle={or:"Honneur suprême",argent:"Gouverneur estimé",bronze:"Mandat honorable",sombre:"Fin du mandat"}[niv]||"";
+    var box=creer("div","badge-rang badge-"+niv);
+    var med=creer("div","badge-medaille"); med.innerHTML=svgMedaille(niv); box.appendChild(med);
+    var txt=creer("div","badge-txt");
+    if(libelle) txt.appendChild(creer("div","badge-niveau",esc(libelle)));
+    txt.appendChild(creer("div","badge-nom",esc(rang.nom)));
+    box.appendChild(txt);
+    return box;
+  }
   function ecranBilan(verdict, kicker){
     var bas=creer("div","bilan-bas");
     bas.appendChild(enteteImpression(verdict.titre));        // visible à l'impression seulement
@@ -535,6 +655,7 @@
     tete.appendChild(creer("div","kicker",kicker));
     if(DIFF && DIFF.nom) tete.appendChild(creer("div","bilan-niveau","Niveau : "+esc(DIFF.nom)));
     bas.appendChild(tete);
+    var bg=badgeRang(verdict.rang); if(bg) bas.appendChild(bg);
     bas.appendChild(creer("div","titre-acte",esc(verdict.titre)));
     bas.appendChild(creer("p","verdict-print",esc(verdict.texte)));   // doublon du verdict, imprimé seulement
     var grille=creer("div","bilan-grille");
@@ -594,7 +715,7 @@
       cur.items.push(en);
     });
     groupes.forEach(function(g,gi){
-      var ouvertParDefaut = (gi===0);
+      var ouvertParDefaut = false;
       var grp=creer("div","jacte"+(ouvertParDefaut?" ouvert":""));
       var tete=creer("button","jacte-tete"); tete.type="button";
       tete.setAttribute("aria-expanded", ouvertParDefaut?"true":"false");
